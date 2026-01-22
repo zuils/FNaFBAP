@@ -135,7 +135,7 @@ def can_fight_endgame(state: CollectionState, player: int) -> bool:
 def set_rules(world: "FNaFB2World", player: int):
     # Bosses
     world.get_location("Party Room 4 - Withered Foxy").access_rule = \
-        lambda state: can_fight_midgame(state, player)
+        lambda state: can_fight_midgame(state, player) and state.has("Sex Toy", player)
 
     # You can only fight Splash Woman with toy freddy
     world.get_location("Women's Bathroom - Splash Woman").access_rule = \
