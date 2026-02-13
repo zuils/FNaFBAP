@@ -37,7 +37,8 @@ class FNaFB2World(World):
     location_name_to_id = {name: data.code for name, data in location_table.items()}
 
     def fill_slot_data(self) -> dict:
-        return self.options.as_dict(*[name for name in self.options_dataclass.type_hints.keys()])
+        return self.options.as_dict("goal", "trade_quest", "difficulty", "fem_rods",
+                                    "extra_checks", "shadow_bonnie", "levelsanity", "grindy")
 
     def create_items(self):
         item_pool: List[FNaFB2Item] = []
