@@ -1,10 +1,7 @@
 from typing import Dict, List, NamedTuple, Optional, TYPE_CHECKING
 
-<<<<<<< HEAD
-=======
 if TYPE_CHECKING:
     from .__init__ import FNaFB2World
->>>>>>> 0.3.4
 from BaseClasses import MultiWorld, Region, LocationProgressType
 from .Locations import FNaFB2Location, location_table, get_locations_by_category
 from Options import Toggle
@@ -174,17 +171,6 @@ def create_regions(world: "FNaFB2World"):
         regions[gem.split(" - ")[0] + " Critical"].locations.append(gem)
 
     for name, data in regions.items():
-<<<<<<< HEAD
-        if name == "Trade Machine" and multiworld.trade_quest[player] == Toggle.option_false:
-            continue
-        if name == "Levelsanity" and (multiworld.levelsanity[player] == Toggle.option_false or multiworld.difficulty[player].value == 2):
-            continue
-        if "Critical" in name and multiworld.difficulty[player].value < 2:
-            continue
-        if "Proud" in name and multiworld.difficulty[player].value < 1:
-            continue
-        if name == "Refurbs" and multiworld.Goal[player].value == 0:
-=======
         if name == "Trade Machine" and world.options.trade_quest == Toggle.option_false:
             continue
         if name == "Levelsanity" and (world.options.levelsanity == Toggle.option_false or world.options.difficulty.value == 2):
@@ -192,7 +178,6 @@ def create_regions(world: "FNaFB2World"):
         if "Critical" in name and world.options.difficulty.value < 2:
             continue
         if "Proud" in name and world.options.difficulty.value < 1:
->>>>>>> 0.3.4
             continue
         if name == "Refurbs" and world.options.goal.value == 0:
             continue
@@ -206,19 +191,11 @@ def create_region(world: "FNaFB2World", player: int, name: str, data: FNaFB2Regi
             loc_data = location_table.get(loc_name)
             location = FNaFB2Location(player, loc_name, loc_data.code if loc_data else None, region)
             if (
-<<<<<<< HEAD
-                ("Rod of Femininity" in loc_name and multiworld.fem_rods[player] == Toggle.option_true)
-                or (loc_name == "Boss Rush" and multiworld.extra_checks[player] == Toggle.option_true and multiworld.Goal[player] == 0)
-                or (loc_name == "Cave of the Past - Dragon Dildo F" and multiworld.extra_checks[player] == Toggle.option_true and multiworld.Goal[player] == 0)
-                or ("Shadow Bonnie" in loc_name and multiworld.shadow_bonnie[player] == Toggle.option_true and multiworld.difficulty[player].value == 2)
-                or ("Toy Freddy - Use" in loc_name and multiworld.grindy[player] == Toggle.option_true)
-=======
                 ("Rod of Femininity" in loc_name and world.options.fem_rods == Toggle.option_true)
                 or (loc_name == "Boss Rush" and world.options.extra_checks == Toggle.option_true and world.options.goal == 0)
                 or (loc_name == "Cave of the Past - Dragon Dildo F" and world.options.extra_checks == Toggle.option_true and world.options.goal == 0)
                 or ("Shadow Bonnie" in loc_name and world.options.shadow_bonnie == Toggle.option_true and world.options.difficulty.value == 2)
                 or ("Toy Freddy - Use" in loc_name and world.options.grindy == Toggle.option_true)
->>>>>>> 0.3.4
                 ):
                 location.progress_type = LocationProgressType.EXCLUDED
             region.locations.append(location)
