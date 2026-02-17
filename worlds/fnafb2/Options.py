@@ -1,6 +1,15 @@
 from typing import Dict
-from Options import Choice, Range, Option, Toggle, DeathLink, DefaultOnToggle, OptionSet
+from Options import Choice, Range, Option, Toggle, DeathLink, DefaultOnToggle, OptionSet, PerGameCommonOptions
+from dataclasses import dataclass
 
+class Goal(Choice):
+    """
+    Choose which goal you want to beat.
+    (Refurbs is not recommended for beginners.)
+    """
+    option_bb = 0
+    option_refurbs = 1
+    default = 0
 
 class Goal(Choice):
     """
@@ -63,7 +72,11 @@ class GrindyChecks(Toggle):
     Turning this on will exclude checks that involve toy freddy using his
     abilities 20 or 40 times.
     """
+<<<<<<< HEAD
     display_name = "Exclude Grindy Checks"
+=======
+    display_anme = "Exclude Grindy Checks"
+>>>>>>> 0.3.4
 
 #class DeathLink(Toggle):
 #    """
@@ -71,6 +84,7 @@ class GrindyChecks(Toggle):
 #    """
 #    display_name = "Deathlink"
 
+<<<<<<< HEAD
 
 fnafb2_options: Dict[str, type(Option)] = {
     "Goal": Goal,
@@ -83,3 +97,16 @@ fnafb2_options: Dict[str, type(Option)] = {
     "grindy": GrindyChecks
 #    "death_link": DeathLink
 }
+=======
+@dataclass
+class FNaFB2Options (PerGameCommonOptions): 
+    goal: Goal
+    trade_quest: TradeQuest
+    difficulty: Difficulty
+    fem_rods: FemRods
+    extra_checks: ExtraChecks
+    shadow_bonnie: ShadowBonnie
+    levelsanity: Levelsanity
+    grindy: GrindyChecks
+#    "death_link": DeathLink
+>>>>>>> 0.3.4

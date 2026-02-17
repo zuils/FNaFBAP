@@ -4,7 +4,7 @@ from BaseClasses import Tutorial, Location, LocationProgressType, CollectionStat
 from worlds.AutoWorld import WebWorld, World
 from .Items import FNaFB2Item, FNaFB2ItemData, get_items_by_category, item_table
 from .Locations import FNaFB2Location, location_table
-from .Options import fnafb2_options
+from .Options import FNaFB2Options
 from .Regions import create_regions
 from .Rules import set_rules
 
@@ -26,7 +26,8 @@ class FNaFB2World(World):
     Are you Freddy for ready?
     """
     game = "Five Nights at Fuckboy's 2"
-    option_definitions = fnafb2_options
+    options_dataclass = FNaFB2Options
+    options = FNaFB2Options
     topology_present = True
     data_version = 4
     required_client_version = (0, 5, 0)
@@ -35,11 +36,9 @@ class FNaFB2World(World):
     item_name_to_id = {name: data.code for name, data in item_table.items()}
     location_name_to_id = {name: data.code for name, data in location_table.items()}
 
-    def get_setting(self, name: str):
-        return getattr(self.multiworld, name)[self.player]
-
     def fill_slot_data(self) -> dict:
-        return {option_name: self.get_setting(option_name).value for option_name in fnafb2_options}
+        return self.options.as_dict("goal", "trade_quest", "difficulty", "fem_rods",
+                                    "extra_checks", "shadow_bonnie", "levelsanity", "grindy")
 
     def create_items(self):
         item_pool: List[FNaFB2Item] = []
@@ -50,7 +49,11 @@ class FNaFB2World(World):
             classification = data.classification
             
             # If difficulty is standard, remove the cassettes, lucky soda, and double pizza
+<<<<<<< HEAD
             if self.get_setting("difficulty") == 0 and (category == "Cassette" \
+=======
+            if self.options.difficulty == 0 and (category == "Cassette" \
+>>>>>>> 0.3.4
                 or "Lucky Soda" in name or "Double Pizza" in name):
                 continue
             
@@ -74,7 +77,11 @@ class FNaFB2World(World):
         return FNaFB2Item(name, data.classification, data.code, self.player)
     
     def pre_fill(self) -> None:
+<<<<<<< HEAD
         if self.get_setting("Goal") == 0:
+=======
+        if self.options.goal == 0:
+>>>>>>> 0.3.4
             location = self.multiworld.get_location("B.B. Giygas", self.player)
         else:
             location = self.multiworld.get_location("Refurbs", self.player)
@@ -82,7 +89,7 @@ class FNaFB2World(World):
         
     
     def create_regions(self):
-        create_regions(self.multiworld, self.player)
+        create_regions(self)
 
     def set_rules(self):
-        set_rules(self.multiworld, self.player)
+        set_rules(self, self.player)

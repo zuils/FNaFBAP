@@ -31,6 +31,7 @@ module Archipelago
                 datapackages_to_update = []
 
                 @game_data["datapackage_checksums"].each do |game, checksum|
+<<<<<<< HEAD
                     if !Dir.exist?(File.join(@data_folder, game))
                         Dir.mkdir(File.join(@data_folder, game))
                         datapackages_to_update << game
@@ -38,6 +39,17 @@ module Archipelago
                         datapackages_to_update << game
                     else
                         @datapackages[game] = JSON.parse(File.read(File.join(@data_folder, game, "#{checksum}.json")).sub("\xEF\xBB\xBF".force_encoding("UTF-8"), ''))
+=======
+                    game_dup = game.dup
+                    game_dup = game_dup.gsub(/[<>:"\/\\|?*]/, '')
+                    if !Dir.exist?(File.join(@data_folder, game_dup))
+                        Dir.mkdir(File.join(@data_folder, game_dup))
+                        datapackages_to_update << game
+                    elsif !File.exist?(File.join(@data_folder, game_dup, "#{checksum}.json"))
+                        datapackages_to_update << game
+                    else
+                        @datapackages[game] = JSON.parse(File.read(File.join(@data_folder, game_dup, "#{checksum}.json")).sub("\xEF\xBB\xBF".force_encoding("UTF-8"), ''))
+>>>>>>> 0.3.4
                     end
                 end
 
@@ -46,7 +58,13 @@ module Archipelago
 
             def update_datapackages(datapackage)
                 datapackage["data"]["games"].each do |game, datapak|
+<<<<<<< HEAD
                     json_filepath = File.join(@data_folder, game, "#{datapak["checksum"]}.json")
+=======
+                    game_dup = game.dup
+                    game_dup = game_dup.gsub(/[<>:"\/\\|?*]/, '')
+                    json_filepath = File.join(@data_folder, game_dup, "#{datapak["checksum"]}.json")
+>>>>>>> 0.3.4
                     File.delete(json_filepath) if File.exist?(json_filepath)
                     File.open(json_filepath, 'w') do |file|
                         file.puts datapak.to_json
@@ -112,4 +130,8 @@ module Archipelago
             end
         end
     end
+<<<<<<< HEAD
 end
+=======
+end
+>>>>>>> 0.3.4

@@ -1,4 +1,4 @@
-games/FNaFB1/Save*.rvdata2
-games/FNaFB2/Save*.rvdata2
-worlds/fnafb1.apworld
-worlds/fnafb2.apworld
+games/FNaFB*/Save*.rvdata2
+games/FNAFB*/desktop.ini
+worlds/*.apworld
+worlds/FNAFB*/.vs
