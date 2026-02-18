@@ -46,14 +46,9 @@ class FNaFB2World(World):
         for name, data in item_table.items():
             quantity = data.max_quantity
             category = data.category
-            classification = data.classification
             
             # If difficulty is standard, remove the cassettes, lucky soda, and double pizza
-<<<<<<< HEAD
-            if self.get_setting("difficulty") == 0 and (category == "Cassette" \
-=======
             if self.options.difficulty == 0 and (category == "Cassette" \
->>>>>>> 0.3.4
                 or "Lucky Soda" in name or "Double Pizza" in name):
                 continue
             
@@ -77,11 +72,7 @@ class FNaFB2World(World):
         return FNaFB2Item(name, data.classification, data.code, self.player)
     
     def pre_fill(self) -> None:
-<<<<<<< HEAD
-        if self.get_setting("Goal") == 0:
-=======
         if self.options.goal == 0:
->>>>>>> 0.3.4
             location = self.multiworld.get_location("B.B. Giygas", self.player)
         else:
             location = self.multiworld.get_location("Refurbs", self.player)
