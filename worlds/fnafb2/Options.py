@@ -2,23 +2,26 @@ from typing import Dict
 from Options import Choice, Range, Option, Toggle, DeathLink, DefaultOnToggle, OptionSet, PerGameCommonOptions
 from dataclasses import dataclass
 
+
+class Scenario(Choice):
+    """
+    Choose which scenario to play
+    """
+    option_toy_freddy = 0
+    option_bb = 1
+    default = 0
+
+
 class Goal(Choice):
     """
     Choose which goal you want to beat.
-    (Refurbs is not recommended for beginners.)
+    If scenario is bb, goal is to beat the toy animatronics.
+    (Refurbs is not recommended.)
     """
     option_bb = 0
     option_refurbs = 1
     default = 0
 
-class Goal(Choice):
-    """
-    Choose which goal you want to beat.
-    (Refurbs is not recommended for beginners.)
-    """
-    option_bb = 0
-    option_refurbs = 1
-    default = 0
 
 class TradeQuest(Toggle):
     """
@@ -31,6 +34,7 @@ class Difficulty(Choice):
     """
     Playing on Proud will include the 3 extra chests on the show stage, the cassettes and rap god boss as locations.
     Playing on Critical will include everything on Proud plus each keystone for ability unlocks and 2 chests in Kid's Cove.
+    Proud and Critical have not been playtested so fair warning.
     """
     display_name = "Difficulty"
     option_standard = 0
@@ -81,7 +85,8 @@ class GrindyChecks(Toggle):
 #    display_name = "Deathlink"
 
 @dataclass
-class FNaFB2Options (PerGameCommonOptions): 
+class FNaFB2Options (PerGameCommonOptions):
+    scenario: Scenario 
     goal: Goal
     trade_quest: TradeQuest
     difficulty: Difficulty
