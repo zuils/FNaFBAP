@@ -108,7 +108,7 @@ item_table: Dict[str, FNaFB2ItemData] = {
     "Confusion Lens":                   FNaFB2ItemData("BBScenario",                                766783_058, ItemClassification.progression),
     "Death":                            FNaFB2ItemData("BBScenario",                                766783_059, ItemClassification.progression),
     "Toreador March":                   FNaFB2ItemData("BBScenario",                                766783_060, ItemClassification.progression),
-    "Toy Animatronics's Essence":       FNaFB2ItemData(["BBScenario", "Quest"],                     766783_061, ItemClassification.progression_skip_balancing, 4),
+    "Toy Animatronics' Essence":        FNaFB2ItemData(["BBScenario", "Quest"],                     766783_061, ItemClassification.progression_skip_balancing, 4),
     
     # Junk
     "Small Pizza":                      FNaFB2ItemData("Filler",                                    766783_062, weight=2),

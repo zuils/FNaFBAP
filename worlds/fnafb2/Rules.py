@@ -163,7 +163,7 @@ def can_fight_endgame(world: "FNaFB2World", state: CollectionState, player: int)
             and skills(world, state, player) >= 25
         )
     else:
-        return party_count(world, state, player) >= 8 and skills(world, state, player) >= 25
+        return party_count(world, state, player) >= 1 and skills(world, state, player) >= 10
 
 def set_rules(world: "FNaFB2World", player: int):
     if world.options.scenario.value == 0:
@@ -200,7 +200,8 @@ def set_rules(world: "FNaFB2World", player: int):
     connect_regions(world, "Left Vent", "Office")
     connect_regions(world, "Right Vent", "Office")
     connect_regions(world, "Office", "Office B.B.", lambda state: state.has("Office B.B.", player))
-    connect_regions(world, "Office", "Cave of the Past", lambda state: can_fight_lategame(world, state, player) and state.has("B.B.'s Essence", player, 4))
+    connect_regions(world, "Office", "Cave of the Past", lambda state: can_fight_lategame(world, state, player) \
+        and state.has("B.B.'s Essence" if world.options.scenario.value == 0 else "Toy Animatronics' Essence", player, 4))
     connect_regions(world, "Cave of the Past", "B.B.'s Lair")
     connect_regions(world, "B.B.'s Lair", "B.B. Giygas")
     if world.options.difficulty.value > 0:
@@ -224,7 +225,7 @@ def set_rules(world: "FNaFB2World", player: int):
         connect_regions(world, "Party Room 3", "Party Room 3 Critical")
         connect_regions(world, "Party Room 4", "Party Room 4 Critical")
         connect_regions(world, "Office", "Office Critical")
-    if world.options.goal.value == 1:
+    if world.options.goal.value == 1 and world.options.scenario.value == 0:
         connect_regions(world, "B.B. Giygas", "Refurbs")
 
 

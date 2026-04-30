@@ -133,8 +133,8 @@ def set_q_rules(world: "FNaFB2World", player: int):
     if world.options.levelsanity == Toggle.option_true and world.options.difficulty.value < 2:
         for i in range(1, 21):
             if i < 6:
-                world.get_location(f"Puppet - Level {i}").access_rule = \
-                    lambda state: state.has("Puppet", player)
+                world.get_location(f"The Puppet - Level {i}").access_rule = \
+                    lambda state: state.has("The Puppet", player)
             elif i < 11:
                 world.get_location(f"B.B. - Level {i}").access_rule = \
                     lambda state: _can_fight_earlygame(world, state, player)

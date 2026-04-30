@@ -37,7 +37,7 @@ class FNaFB2World(World):
     location_name_to_id = {name: data.code for name, data in location_table.items()}
 
     def fill_slot_data(self) -> dict:
-        return self.options.as_dict("goal", "trade_quest", "difficulty", "fem_rods",
+        return self.options.as_dict("scenario", "goal", "trade_quest", "difficulty", "fem_rods",
                                     "extra_checks", "shadow_bonnie", "levelsanity", "grindy")
 
     def create_items(self):
@@ -66,6 +66,8 @@ class FNaFB2World(World):
             item_pool += [self.create_item(name) for _ in range(quantity)]
         while len(item_pool) < total_locations:
             item_pool.append(self.create_item(self.get_filler_item_name()))
+        
+        print(f"Item Pool: {len(item_pool)}")
 
         self.multiworld.itempool += item_pool
 
