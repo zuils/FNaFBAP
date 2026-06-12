@@ -37,10 +37,20 @@ class FNaFB2World(World):
     location_name_to_id = {name: data.code for name, data in location_table.items()}
 
     def fill_slot_data(self) -> dict:
-        return self.options.as_dict("goal", "trade_quest", "difficulty", "fem_rods",
-                                    "extra_checks", "shadow_bonnie", "levelsanity", "grindy")
+        return self.options.as_dict("scenario", "goal", "trade_quest", "difficulty", "fem_rods", "extra_checks",
+                                    "shadow_bonnie", "levelsanity", "grindy", "copyright", "shop")
 
     def create_items(self):
+        if self.options.scenario.value == 0:
+            if self.options.goal == 0:
+                boss_loc = self.multiworld.get_location("B.B. Giygas - B.B.", self.player)
+            else:
+                boss_loc = self.multiworld.get_location("Refurbs", self.player)
+        else:
+            boss_loc = self.multiworld.get_location("B.B. Giygas - Toy Animatronics", self.player)
+        
+        boss_loc.place_locked_item(self.create_item("Victory"))
+        
         item_pool: List[FNaFB2Item] = []
         total_locations = len(self.multiworld.get_unfilled_locations(self.player))
         for name, data in item_table.items():
@@ -48,17 +58,25 @@ class FNaFB2World(World):
             category = data.category
             
             # If difficulty is standard, remove the cassettes, lucky soda, and double pizza
-            if self.options.difficulty == 0 and (category == "Cassette" \
+            if self.options.difficulty.value == 0 and (category == "Cassette" \
                 or "Lucky Soda" in name or "Double Pizza" in name):
                 continue
             
-            # Ignore filler, it will be added in a later stage.
-            if category == "Filler":
+            # Ignore filler and goal, filler will be added in a later stage.
+            if category in ("Filler", "Goal"):
+                continue
+            
+            # BB Scenario items
+            if self.options.scenario.value == 0 and "BBScenario" in category:
+                continue
+            elif self.options.scenario.value == 1 and "TFScenario" in category:
                 continue
 
             item_pool += [self.create_item(name) for _ in range(quantity)]
         while len(item_pool) < total_locations:
             item_pool.append(self.create_item(self.get_filler_item_name()))
+        
+        print(f"Item Pool: {len(item_pool)}")
 
         self.multiworld.itempool += item_pool
 
@@ -70,14 +88,6 @@ class FNaFB2World(World):
     def create_item(self, name: str) -> FNaFB2Item:
         data = item_table[name]
         return FNaFB2Item(name, data.classification, data.code, self.player)
-    
-    def pre_fill(self) -> None:
-        if self.options.goal == 0:
-            location = self.multiworld.get_location("B.B. Giygas", self.player)
-        else:
-            location = self.multiworld.get_location("Refurbs", self.player)
-        location.place_locked_item(FNaFB2Item("Victory", ItemClassification.progression, 766783_070, self.player))
-        
     
     def create_regions(self):
         create_regions(self)

@@ -1,24 +1,26 @@
-from typing import Dict
 from Options import Choice, Range, Option, Toggle, DeathLink, DefaultOnToggle, OptionSet, PerGameCommonOptions
 from dataclasses import dataclass
 
+
+class Scenario(Choice):
+    """
+    Choose which scenario to play
+    """
+    option_toy_freddy = 0
+    option_bb = 1
+    default = 0
+
+
 class Goal(Choice):
     """
     Choose which goal you want to beat.
-    (Refurbs is not recommended for beginners.)
+    If scenario is bb, goal is to beat the toy animatronics.
+    (Refurbs is not recommended.)
     """
     option_bb = 0
     option_refurbs = 1
     default = 0
 
-class Goal(Choice):
-    """
-    Choose which goal you want to beat.
-    (Refurbs is not recommended for beginners.)
-    """
-    option_bb = 0
-    option_refurbs = 1
-    default = 0
 
 class TradeQuest(Toggle):
     """
@@ -27,16 +29,19 @@ class TradeQuest(Toggle):
     """
     display_name = "Include Trade Checks"
 
+
 class Difficulty(Choice):
     """
     Playing on Proud will include the 3 extra chests on the show stage, the cassettes and rap god boss as locations.
     Playing on Critical will include everything on Proud plus each keystone for ability unlocks and 2 chests in Kid's Cove.
+    Proud and Critical have not been playtested so fair warning.
     """
     display_name = "Difficulty"
     option_standard = 0
     option_proud = 1
     option_critical = 2
     default = 0
+
 
 class FemRods(DefaultOnToggle):
     """
@@ -45,34 +50,54 @@ class FemRods(DefaultOnToggle):
     """
     display_name = "Exclude Rod of Femininity"
 
+
 class ExtraChecks(DefaultOnToggle):
     """
     Turning this on will force Boss Rush and the Dragon Dildo F check to be a filler item.
     This setting is ignored if goal is set to refurbs.
     """
     display_name = "Exclude Extra Checks"
-    
+
+
 class ShadowBonnie(Toggle):
     """
     Turning this on will force the Shadow Bonnie bossfight check to be a filler item.
     This setting is only affected if the critical difficulty is enabled. 
     """
     display_name = "Exclude Shadow Bonnie"
-    
+
+
 class Levelsanity(Toggle):
     """
-    Includes each level up and each ability learned as an item location.
+    Includes each level up and each ability learned as an item location
     This setting is ignored if the difficulty is critical
-    (Adds 100 locations)
+    Adds 100 locations if scenario is toy freddy, else it's 40
     """
     display_name = "Include Levelsanity"
-    
+
+
 class GrindyChecks(Toggle):
     """
     Turning this on will exclude checks that involve toy freddy using his
     abilities 20 or 40 times.
     """
     display_anme = "Exclude Grindy Checks"
+
+
+class Copyright(Toggle):
+    """
+    Enable copyright songs
+    """
+    display_name = "Copyright Songs"
+
+class Shop(Range):
+    """
+    Change the percentage of the vending machine items cost
+    """
+    display_name = "Shop Percentage"
+    range_start = 1
+    range_end = 1000
+    default = 100
 
 #class DeathLink(Toggle):
 #    """
@@ -81,7 +106,8 @@ class GrindyChecks(Toggle):
 #    display_name = "Deathlink"
 
 @dataclass
-class FNaFB2Options (PerGameCommonOptions): 
+class FNaFB2Options (PerGameCommonOptions):
+    scenario: Scenario 
     goal: Goal
     trade_quest: TradeQuest
     difficulty: Difficulty
@@ -90,4 +116,6 @@ class FNaFB2Options (PerGameCommonOptions):
     shadow_bonnie: ShadowBonnie
     levelsanity: Levelsanity
     grindy: GrindyChecks
+    copyright: Copyright
+    shop: Shop
 #    "death_link": DeathLink
