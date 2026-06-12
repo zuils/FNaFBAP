@@ -109,7 +109,7 @@ def create_regions(world: "FNaFB2World"):
         if isinstance(data.category, str):
             regions[data.category].locations.append(name)
         else:
-            if world.options.scenario.value == 0 and has_category(data, "NotBBScenario"):
+            if world.options.scenario.value == 0 and has_category(data, "TFScenario"):
                 regions[data.category[1]].locations.append(name)
             elif world.options.scenario.value == 1 and has_category(data, "BBScenario"):
                 regions[data.category[1]].locations.append(name)
@@ -123,7 +123,7 @@ def create_regions(world: "FNaFB2World"):
             continue
         if "Proud" in name and world.options.difficulty.value < 1:
             continue
-        if name == "Refurbs" and world.options.goal.value == 0:
+        if name == "Refurbs" and (world.options.scenario.value == 1 or world.options.goal.value == 0):
             continue
         world.multiworld.regions.append(create_region(world, world.player, name, data))
 
@@ -140,7 +140,7 @@ def create_region(world: "FNaFB2World", player: int, name: str, data: FNaFB2Regi
                 or (loc_name == "Cave of the Past - Dragon Dildo F" and world.options.extra_checks == Toggle.option_true and world.options.goal == 0)
                 or ("Shadow Bonnie" in loc_name and world.options.shadow_bonnie == Toggle.option_true and world.options.difficulty.value == 2)
                 or ("Toy Freddy - Use" in loc_name and world.options.grindy == Toggle.option_true)
-                ):
+            ):
                 location.progress_type = LocationProgressType.EXCLUDED
             region.locations.append(location)
 

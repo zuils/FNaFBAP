@@ -19,14 +19,25 @@ def party_count(world: "FNaFB2World", state: CollectionState, player: int) -> in
             + state.count("Withered Chica", player)
             + state.count("Withered Foxy", player)
             + 1 # Toy Freddy
-            )
+        )
     else:
         return 1 + state.count("The Puppet", player)
+
+def freddy_attack(state: CollectionState, player: int) -> int:
+    mic = state.count("Progressive Microphone", player)
+    rod = state.count("Progressive Rod of Femininity", player)
+    dragon = state.count("Progressive Dragon Dildo", player)
+    
+    mic_damage = [0, 1, 2, 3, 4, 5, 6][mic]
+    rod_damage = [0, 5, 6][rod]
+    dragon_damage = [0, 3, 4, 5, 5, 6, 6][dragon]
+    
+    return max(mic_damage, rod_damage, dragon_damage)
 
 # Check if the player has the party members before adding their power to the calculation
 def total_attack(state: CollectionState, player: int) -> int:
     return (
-        state.count("Progressive Microphone", player)
+        freddy_attack(state, player)
         + state.count("Toy Bonnie", player) * state.count("Progressive Guitar", player)
         + state.count("Toy Chica", player) * max((state.count("Progressive Cupcakes", player) - 1), 0) # -1 for the first cupcake
         + state.count("Mangle", player) * state.count("Progressive Hook", player)
@@ -90,9 +101,9 @@ def skills(world: "FNaFB2World", state: CollectionState, player: int) -> int:
         return (
             state.count("Token Throw", player)
             + state.count("Flying Fright", player)
-            + state.count("Spread Bomb", player)
             + state.count("The Puppet", player) * (
                 state.count("Poison Lens", player)
+                + state.count("Spread Bomb", player)
                 + state.count("Smoke Lens", player)
                 + state.count("Confusion Lens", player)
                 + state.count("Death", player) * 5 # Death has a 70% chance to instakill every enemy including bosses
@@ -148,7 +159,7 @@ def can_fight_lategame(world: "FNaFB2World", state: CollectionState, player: int
         return (
             total_attack(state, player) >= 24
             and total_defense(state, player) >= 160
-            and party_count(world, state, player) >= 4
+            and party_count(world, state, player) >= 6
             and skills(world, state, player) >= 20
         )
     else:
@@ -159,11 +170,11 @@ def can_fight_endgame(world: "FNaFB2World", state: CollectionState, player: int)
         return (
             total_attack(state, player) >= 40
             and total_defense(state, player) >= 300
-            and party_count(world, state, player) >= 8
+            and party_count(world, state, player) >= 7
             and skills(world, state, player) >= 25
         )
     else:
-        return party_count(world, state, player) >= 1 and skills(world, state, player) >= 10
+        return party_count(world, state, player) > 1 and skills(world, state, player) >= 10
 
 def set_rules(world: "FNaFB2World", player: int):
     if world.options.scenario.value == 0:
@@ -174,24 +185,21 @@ def set_rules(world: "FNaFB2World", player: int):
     # Connect regions at rule runtime
     connect_regions(world, "Menu", "Show Stage")
     connect_regions(world, "Show Stage", "Kid's Cove")
-    connect_regions(world, "Kid's Cove", "Kid's Cove B.B.", lambda state: state.has("Kid's Cove B.B.", player))
     connect_regions(world, "Show Stage", "Main Hall")
     if world.options.trade_quest == Toggle.option_true:
         connect_regions(world, "Show Stage", "Trade Machine")
     if world.options.levelsanity == Toggle.option_true and world.options.difficulty.value < 2:
         connect_regions(world, "Show Stage", "Levelsanity")
     connect_regions(world, "Show Stage", "Grindy")
-    connect_regions(world, "Main Hall", "Main Hall B.B.", lambda state: state.has("Main Hall B.B.", player))
     connect_regions(world, "Main Hall", "Men's Bathroom")
-    if world.options.fem_rods == Toggle.option_true:
+    if world.options.fem_rods == Toggle.option_true or world.options.scenario.value == 1:
         connect_regions(world, "Main Hall", "Women's Bathroom")
     else:
-        connect_regions(world, "Main Hall", "Women's Bathroom", lambda state: can_fight_lategame(world, state, player))
+        connect_regions(world, "Main Hall", "Women's Bathroom", lambda state: can_fight_endgame(world, state, player))
     connect_regions(world, "Main Hall", "Parts/Service")
     connect_regions(world, "Main Hall", "Office Hall")
     connect_regions(world, "Office Hall", "Party Room 4")
     connect_regions(world, "Office Hall", "Party Room 3")
-    connect_regions(world, "Party Room 3", "Party Room 3 B.B.", lambda state: state.has("Party Room 3 B.B.", player))
     connect_regions(world, "Office Hall", "Party Room 1")
     connect_regions(world, "Office Hall", "Party Room 2")
     connect_regions(world, "Office Hall", "Office")
@@ -199,8 +207,7 @@ def set_rules(world: "FNaFB2World", player: int):
     connect_regions(world, "Party Room 2", "Right Vent")
     connect_regions(world, "Left Vent", "Office")
     connect_regions(world, "Right Vent", "Office")
-    connect_regions(world, "Office", "Office B.B.", lambda state: state.has("Office B.B.", player))
-    connect_regions(world, "Office", "Cave of the Past", lambda state: can_fight_lategame(world, state, player) \
+    connect_regions(world, "Office", "Cave of the Past", lambda state: can_fight_endgame(world, state, player) \
         and state.has("B.B.'s Essence" if world.options.scenario.value == 0 else "Toy Animatronics' Essence", player, 4))
     connect_regions(world, "Cave of the Past", "B.B.'s Lair")
     connect_regions(world, "B.B.'s Lair", "B.B. Giygas")
@@ -225,15 +232,12 @@ def set_rules(world: "FNaFB2World", player: int):
         connect_regions(world, "Party Room 3", "Party Room 3 Critical")
         connect_regions(world, "Party Room 4", "Party Room 4 Critical")
         connect_regions(world, "Office", "Office Critical")
-    if world.options.goal.value == 1 and world.options.scenario.value == 0:
-        connect_regions(world, "B.B. Giygas", "Refurbs")
-
-
-    # Win Condition
     if world.options.scenario.value == 0:
-        if world.options.goal.value == 0:
-            world.multiworld.completion_condition[player] = lambda state: state.can_reach_location("B.B. Giygas - B.B.", player)
-        else:
-            world.multiworld.completion_condition[player] = lambda state: state.can_reach_location("Refurbs", player)
-    else:
-        world.multiworld.completion_condition[player] = lambda state: state.can_reach_location("B.B. Giygas - Toy Animatronics", player)
+        connect_regions(world, "Kid's Cove", "Kid's Cove B.B.", lambda state: state.has("Kid's Cove B.B.", player))
+        connect_regions(world, "Main Hall", "Main Hall B.B.", lambda state: state.has("Main Hall B.B.", player))
+        connect_regions(world, "Party Room 3", "Party Room 3 B.B.", lambda state: state.has("Party Room 3 B.B.", player))
+        connect_regions(world, "Office", "Office B.B.", lambda state: state.has("Office B.B.", player))
+        if world.options.goal.value == 1:
+            connect_regions(world, "B.B. Giygas", "Refurbs")
+
+    world.multiworld.completion_condition[player] = lambda state: state.has("Victory", player)

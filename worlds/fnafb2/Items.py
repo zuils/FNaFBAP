@@ -26,78 +26,78 @@ def get_items_by_category(category: str) -> Dict[str, FNaFB2ItemData]:
 
 item_table: Dict[str, FNaFB2ItemData] = {
     # Party Members
-    "Toy Bonnie":                       FNaFB2ItemData(["NotBBScenario", "Party"],                 766783_000, ItemClassification.progression),
-    "Toy Chica":                        FNaFB2ItemData(["NotBBScenario", "Party"],                 766783_001, ItemClassification.progression),
-    "Mangle":                           FNaFB2ItemData(["NotBBScenario", "Party"],                 766783_002, ItemClassification.progression),
-    "Withered Freddy":                  FNaFB2ItemData(["NotBBScenario", "Party"],                 766783_003, ItemClassification.progression),
-    "Withered Bonnie":                  FNaFB2ItemData(["NotBBScenario", "Party"],                 766783_004, ItemClassification.progression),
-    "Withered Chica":                   FNaFB2ItemData(["NotBBScenario", "Party"],                 766783_005, ItemClassification.progression),
-    "Withered Foxy":                    FNaFB2ItemData(["NotBBScenario", "Party"],                 766783_006, ItemClassification.progression),
+    "Toy Bonnie":                       FNaFB2ItemData(["TFScenario", "Party"],                 766783_000, ItemClassification.progression),
+    "Toy Chica":                        FNaFB2ItemData(["TFScenario", "Party"],                 766783_001, ItemClassification.progression),
+    "Mangle":                           FNaFB2ItemData(["TFScenario", "Party"],                 766783_002, ItemClassification.progression),
+    "Withered Freddy":                  FNaFB2ItemData(["TFScenario", "Party"],                 766783_003, ItemClassification.progression),
+    "Withered Bonnie":                  FNaFB2ItemData(["TFScenario", "Party"],                 766783_004, ItemClassification.progression),
+    "Withered Chica":                   FNaFB2ItemData(["TFScenario", "Party"],                 766783_005, ItemClassification.progression),
+    "Withered Foxy":                    FNaFB2ItemData(["TFScenario", "Party"],                 766783_006, ItemClassification.progression),
 
     # Weapons
-    "Progressive Microphone":           FNaFB2ItemData(["NotBBScenario", "TFreddyWeapons"],        766783_007, ItemClassification.progression,                 6),
-    "Progressive Guitar":               FNaFB2ItemData(["NotBBScenario", "TBonnieWeapons"],        766783_008, ItemClassification.progression,                 6),
+    "Progressive Microphone":           FNaFB2ItemData(["TFScenario", "TFreddyWeapons"],        766783_007, ItemClassification.progression,                 7),
+    "Progressive Guitar":               FNaFB2ItemData(["TFScenario", "TBonnieWeapons"],        766783_008, ItemClassification.progression,                 7),
     # First progressive cupcake is to recruit Toy Chica
-    "Progressive Cupcakes":             FNaFB2ItemData(["NotBBScenario", "TChicaWeapons"],         766783_009, ItemClassification.progression,                 7),
-    "Progressive Hook":                 FNaFB2ItemData(["NotBBScenario", "MangleWeapons"],         766783_010, ItemClassification.progression,                 6),
-    "Progressive Dragon Dildo":         FNaFB2ItemData("Useful",                                   766783_011, ItemClassification.progression,                 6),
-    "Progressive Rod of Femininity":    FNaFB2ItemData(["NotBBScenario", "Useful"],                766783_012, ItemClassification.useful,                      2),
-    "Stick":                            FNaFB2ItemData("TFreddyWeapons",                           766783_013, ItemClassification.progression),
+    "Progressive Cupcakes":             FNaFB2ItemData(["TFScenario", "TChicaWeapons"],         766783_009, ItemClassification.progression,                 8),
+    "Progressive Hook":                 FNaFB2ItemData(["TFScenario", "MangleWeapons"],         766783_010, ItemClassification.progression,                 7),
+    "Progressive Dragon Dildo":         FNaFB2ItemData(["TFScenario", "FreddyWeapons"],         766783_011, ItemClassification.progression,                 7),
+    "Progressive Rod of Femininity":    FNaFB2ItemData(["TFScenario", "FreddyWeapons"],         766783_012, ItemClassification.progression,                 2),
+    "Stick":                            FNaFB2ItemData("TFreddyWeapons",                        766783_013, ItemClassification.progression),
 
 
 
     # Skills (Not including Bite of 87 because of how much it would break the game)
-    "Progressive Tophat Slash":         FNaFB2ItemData(["NotBBScenario", "TFreddySkills"],          766783_014, ItemClassification.progression,                3),
-    "Progressive Tophat Dash":          FNaFB2ItemData(["NotBBScenario", "TFreddySkills"],          766783_015, ItemClassification.progression,                3),
-    "Progressive Tophat Crash":         FNaFB2ItemData(["NotBBScenario", "TFreddySkills"],          766783_016, ItemClassification.progression,                3),
-    "Progressive Tophat Smash":         FNaFB2ItemData(["NotBBScenario", "TFreddySkills"],          766783_017, ItemClassification.progression,                3),
-    "Electroshock":                     FNaFB2ItemData(["NotBBScenario", "MangleSkills"],           766783_018, ItemClassification.progression),
-    "Paravolt":                         FNaFB2ItemData(["NotBBScenario", "MangleSkills"],           766783_019, ItemClassification.progression),
-    "Somnojolt":                        FNaFB2ItemData(["NotBBScenario", "MangleSkills"],           766783_020, ItemClassification.progression),
-    "Lightningbolt":                    FNaFB2ItemData(["NotBBScenario", "MangleSkills"],           766783_021, ItemClassification.progression),
-    "Healing Wing":                     FNaFB2ItemData(["NotBBScenario", "TChicaSkills"],           766783_022, ItemClassification.progression),
-    "Curing Wing":                      FNaFB2ItemData("TChicaSkills",                              766783_023, ItemClassification.progression),
-    "Raising Wing":                     FNaFB2ItemData("TChicaSkills",                              766783_024, ItemClassification.progression),
-    "Recovery Wing":                    FNaFB2ItemData(["NotBBScenario", "TChicaSkills"],           766783_025, ItemClassification.progression),
-    "Grab Bag":                         FNaFB2ItemData(["NotBBScenario", "TBonnieSkills"],          766783_026, ItemClassification.useful),
-    "Status Bomb":                      FNaFB2ItemData(["NotBBScenario", "TBonnieSkills"],          766783_027, ItemClassification.progression),
-    "Spread Bomb":                      FNaFB2ItemData("TBonnieSkills",                             766783_028, ItemClassification.progression),
-    "Timer Flip":                       FNaFB2ItemData(["NotBBScenario", "TBonnieSkills"],          766783_029),
-    "Death Inhale":                     FNaFB2ItemData(["NotBBScenario", "TFreddySkills"],          766783_030, ItemClassification.useful),
-    "Terror Fever":                     FNaFB2ItemData(["NotBBScenario", "TBonnieSkills"],          766783_031, ItemClassification.useful),
-    "Avian Strike":                     FNaFB2ItemData(["NotBBScenario", "TChicaSkills"],           766783_032, ItemClassification.useful),
-    "Disassembly":                      FNaFB2ItemData(["NotBBScenario", "MangleSkills"],           766783_033, ItemClassification.useful),
+    "Progressive Tophat Slash":         FNaFB2ItemData(["TFScenario", "TFreddySkills"],          766783_014, ItemClassification.progression,                3),
+    "Progressive Tophat Dash":          FNaFB2ItemData(["TFScenario", "TFreddySkills"],          766783_015, ItemClassification.progression,                3),
+    "Progressive Tophat Crash":         FNaFB2ItemData(["TFScenario", "TFreddySkills"],          766783_016, ItemClassification.progression,                3),
+    "Progressive Tophat Smash":         FNaFB2ItemData(["TFScenario", "TFreddySkills"],          766783_017, ItemClassification.progression,                3),
+    "Electroshock":                     FNaFB2ItemData(["TFScenario", "MangleSkills"],           766783_018, ItemClassification.progression),
+    "Paravolt":                         FNaFB2ItemData(["TFScenario", "MangleSkills"],           766783_019, ItemClassification.progression),
+    "Somnojolt":                        FNaFB2ItemData(["TFScenario", "MangleSkills"],           766783_020, ItemClassification.progression),
+    "Lightningbolt":                    FNaFB2ItemData(["TFScenario", "MangleSkills"],           766783_021, ItemClassification.progression),
+    "Healing Wing":                     FNaFB2ItemData(["TFScenario", "TChicaSkills"],           766783_022, ItemClassification.progression),
+    "Curing Wing":                      FNaFB2ItemData("TChicaSkills",                           766783_023, ItemClassification.progression),
+    "Raising Wing":                     FNaFB2ItemData("TChicaSkills",                           766783_024, ItemClassification.progression),
+    "Recovery Wing":                    FNaFB2ItemData(["TFScenario", "TChicaSkills"],           766783_025, ItemClassification.progression),
+    "Grab Bag":                         FNaFB2ItemData(["TFScenario", "TBonnieSkills"],          766783_026, ItemClassification.useful),
+    "Status Bomb":                      FNaFB2ItemData(["TFScenario", "TBonnieSkills"],          766783_027, ItemClassification.progression),
+    "Spread Bomb":                      FNaFB2ItemData("TBonnieSkills",                          766783_028, ItemClassification.progression),
+    "Timer Flip":                       FNaFB2ItemData(["TFScenario", "TBonnieSkills"],          766783_029),
+    "Death Inhale":                     FNaFB2ItemData(["TFScenario", "TFreddySkills"],          766783_030, ItemClassification.useful),
+    "Terror Fever":                     FNaFB2ItemData(["TFScenario", "TBonnieSkills"],          766783_031, ItemClassification.useful),
+    "Avian Strike":                     FNaFB2ItemData(["TFScenario", "TChicaSkills"],           766783_032, ItemClassification.useful),
+    "Disassembly":                      FNaFB2ItemData(["TFScenario", "MangleSkills"],           766783_033, ItemClassification.useful),
 
     # Armor/Defense
-    "Progressive Body Endoskeletons":   FNaFB2ItemData(["NotBBScenario", "Armor"],                  766783_034, ItemClassification.progression,                4),
-    "Progressive Head Endoskeletons":   FNaFB2ItemData(["NotBBScenario", "Armor"],                  766783_035, ItemClassification.progression,                4),
-    "Progressive Pizza Shields":        FNaFB2ItemData(["NotBBScenario", "Armor"],                  766783_036, ItemClassification.progression,                4),
-    "Progressive Caffeine Sodas":       FNaFB2ItemData(["NotBBScenario", "Armor"],                  766783_037, ItemClassification.progression,                4),
-    "Lucky Soda":                       FNaFB2ItemData(["NotBBScenario", "Armor"],                  766783_038, ItemClassification.useful),
-    "Double Pizza":                     FNaFB2ItemData(["NotBBScenario", "Armor"],                  766783_039, ItemClassification.useful),
+    "Progressive Body Endoskeletons":   FNaFB2ItemData(["TFScenario", "Armor"],                  766783_034, ItemClassification.progression,                4),
+    "Progressive Head Endoskeletons":   FNaFB2ItemData(["TFScenario", "Armor"],                  766783_035, ItemClassification.progression,                4),
+    "Progressive Pizza Shields":        FNaFB2ItemData(["TFScenario", "Armor"],                  766783_036, ItemClassification.progression,                4),
+    "Progressive Caffeine Sodas":       FNaFB2ItemData(["TFScenario", "Armor"],                  766783_037, ItemClassification.progression,                4),
+    "Lucky Soda":                       FNaFB2ItemData(["TFScenario", "Armor"],                  766783_038, ItemClassification.useful),
+    "Double Pizza":                     FNaFB2ItemData(["TFScenario", "Armor"],                  766783_039, ItemClassification.useful),
 
     # Progression
     # One to turn into BB, one to turn into the vending machine
     "Sex Toy Voucher":                  FNaFB2ItemData("Quest",                                     766783_040, ItemClassification.progression,                2),
     # First Sex Toy gets stolen so you need 2 to get Mangle
     "Sex Toy":                          FNaFB2ItemData("Quest",                                     766783_041, ItemClassification.progression,                2),
-    "B.B.'s Essence":                   FNaFB2ItemData(["NotBBScenario", "Quest"],                  766783_042, ItemClassification.progression_skip_balancing, 4),
+    "B.B.'s Essence":                   FNaFB2ItemData(["TFScenario", "Quest"],                     766783_042, ItemClassification.progression_skip_balancing, 4),
 
     # Cassettes for proud mode
     "Cassette Radar":                   FNaFB2ItemData("Cassette",                                  766783_043, ItemClassification.progression),
     "Cassette":                         FNaFB2ItemData("Cassette",                                  766783_044, ItemClassification.progression,                10),
 
     # BB
-    "Main Hall B.B.":                   FNaFB2ItemData(["NotBBScenario", "Quest"],                  766783_045, ItemClassification.progression),
-    "Party Room 3 B.B.":                FNaFB2ItemData(["NotBBScenario", "Quest"],                  766783_046, ItemClassification.progression),
-    "Kid's Cove B.B.":                  FNaFB2ItemData(["NotBBScenario", "Quest"],                  766783_047, ItemClassification.progression),
-    "Office B.B.":                      FNaFB2ItemData(["NotBBScenario", "Quest"],                  766783_048, ItemClassification.progression),
+    "Main Hall B.B.":                   FNaFB2ItemData(["TFScenario", "Quest"],                  766783_045, ItemClassification.progression),
+    "Party Room 3 B.B.":                FNaFB2ItemData(["TFScenario", "Quest"],                  766783_046, ItemClassification.progression),
+    "Kid's Cove B.B.":                  FNaFB2ItemData(["TFScenario", "Quest"],                  766783_047, ItemClassification.progression),
+    "Office B.B.":                      FNaFB2ItemData(["TFScenario", "Quest"],                  766783_048, ItemClassification.progression),
 
     # Gems
-    "Tophat Keystone":                  FNaFB2ItemData(["NotBBScenario", "Quest"],                  766783_049, ItemClassification.progression),
-    "Terror Keystone":                  FNaFB2ItemData(["NotBBScenario", "Quest"],                  766783_050, ItemClassification.progression),
-    "Avian Keystone":                   FNaFB2ItemData(["NotBBScenario", "Quest"],                  766783_051, ItemClassification.progression),
-    "Assembly Keystone":                FNaFB2ItemData(["NotBBScenario", "Quest"],                  766783_052, ItemClassification.progression),
+    "Tophat Keystone":                  FNaFB2ItemData(["TFScenario", "Quest"],                  766783_049, ItemClassification.progression),
+    "Terror Keystone":                  FNaFB2ItemData(["TFScenario", "Quest"],                  766783_050, ItemClassification.progression),
+    "Avian Keystone":                   FNaFB2ItemData(["TFScenario", "Quest"],                  766783_051, ItemClassification.progression),
+    "Assembly Keystone":                FNaFB2ItemData(["TFScenario", "Quest"],                  766783_052, ItemClassification.progression),
     
     # BB Scenario Items    
     "The Puppet":                       FNaFB2ItemData("BBScenario",                                766783_053, ItemClassification.progression),
@@ -127,5 +127,6 @@ item_table: Dict[str, FNaFB2ItemData] = {
     "Attack Boost":                     FNaFB2ItemData("Filler",                                    766783_075, weight=1),
     "Defense Boost":                    FNaFB2ItemData("Filler",                                    766783_076, weight=1),
     "Donuts":                           FNaFB2ItemData("Filler",                                    766783_077, weight=2),
-    "Tokens":                           FNaFB2ItemData("Filler",                                    766783_078, weight=3)
+    "Tokens":                           FNaFB2ItemData("Filler",                                    766783_078, weight=3),
+    "Victory":                          FNaFB2ItemData("Goal",                                      766783_079, ItemClassification.progression)
 }

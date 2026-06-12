@@ -37,10 +37,20 @@ class FNaFB2World(World):
     location_name_to_id = {name: data.code for name, data in location_table.items()}
 
     def fill_slot_data(self) -> dict:
-        return self.options.as_dict("scenario", "goal", "trade_quest", "difficulty", "fem_rods",
-                                    "extra_checks", "shadow_bonnie", "levelsanity", "grindy")
+        return self.options.as_dict("scenario", "goal", "trade_quest", "difficulty", "fem_rods", "extra_checks",
+                                    "shadow_bonnie", "levelsanity", "grindy", "copyright", "shop")
 
     def create_items(self):
+        if self.options.scenario.value == 0:
+            if self.options.goal == 0:
+                boss_loc = self.multiworld.get_location("B.B. Giygas - B.B.", self.player)
+            else:
+                boss_loc = self.multiworld.get_location("Refurbs", self.player)
+        else:
+            boss_loc = self.multiworld.get_location("B.B. Giygas - Toy Animatronics", self.player)
+        
+        boss_loc.place_locked_item(self.create_item("Victory"))
+        
         item_pool: List[FNaFB2Item] = []
         total_locations = len(self.multiworld.get_unfilled_locations(self.player))
         for name, data in item_table.items():
@@ -52,16 +62,15 @@ class FNaFB2World(World):
                 or "Lucky Soda" in name or "Double Pizza" in name):
                 continue
             
-            # Ignore filler, it will be added in a later stage.
-            if category == "Filler":
+            # Ignore filler and goal, filler will be added in a later stage.
+            if category in ("Filler", "Goal"):
                 continue
             
             # BB Scenario items
-            if self.options.scenario.value == 0:
-                if "BBScenario" in category:
-                    continue
-            elif "NotBBScenario" in category:
-                    continue
+            if self.options.scenario.value == 0 and "BBScenario" in category:
+                continue
+            elif self.options.scenario.value == 1 and "TFScenario" in category:
+                continue
 
             item_pool += [self.create_item(name) for _ in range(quantity)]
         while len(item_pool) < total_locations:

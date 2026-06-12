@@ -91,7 +91,7 @@ def set_normal_rules(world: "FNaFB2World", player: int):
     world.get_location("Kid's Cove - Camera").access_rule = \
         lambda state: _can_fight_almostlategame(world, state, player)
     world.get_location("Parts/Service - Camera").access_rule = \
-        lambda state: _can_fight_almostlategame(world, state, player)
+        lambda state: _can_fight_midgame(world, state, player)
     world.get_location("Office - Camera").access_rule = \
         lambda state: _can_fight_lategame(world, state, player)
     world.get_location("Left Vent - Camera").access_rule = \

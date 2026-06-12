@@ -1,4 +1,3 @@
-from typing import Dict
 from Options import Choice, Range, Option, Toggle, DeathLink, DefaultOnToggle, OptionSet, PerGameCommonOptions
 from dataclasses import dataclass
 
@@ -30,6 +29,7 @@ class TradeQuest(Toggle):
     """
     display_name = "Include Trade Checks"
 
+
 class Difficulty(Choice):
     """
     Playing on Proud will include the 3 extra chests on the show stage, the cassettes and rap god boss as locations.
@@ -42,6 +42,7 @@ class Difficulty(Choice):
     option_critical = 2
     default = 0
 
+
 class FemRods(DefaultOnToggle):
     """
     Turning this on will force both Rod of Femininity A and B to be filler items.
@@ -49,34 +50,54 @@ class FemRods(DefaultOnToggle):
     """
     display_name = "Exclude Rod of Femininity"
 
+
 class ExtraChecks(DefaultOnToggle):
     """
     Turning this on will force Boss Rush and the Dragon Dildo F check to be a filler item.
     This setting is ignored if goal is set to refurbs.
     """
     display_name = "Exclude Extra Checks"
-    
+
+
 class ShadowBonnie(Toggle):
     """
     Turning this on will force the Shadow Bonnie bossfight check to be a filler item.
     This setting is only affected if the critical difficulty is enabled. 
     """
     display_name = "Exclude Shadow Bonnie"
-    
+
+
 class Levelsanity(Toggle):
     """
-    Includes each level up and each ability learned as an item location.
+    Includes each level up and each ability learned as an item location
     This setting is ignored if the difficulty is critical
-    (Adds 100 locations)
+    Adds 100 locations if scenario is toy freddy, else it's 40
     """
     display_name = "Include Levelsanity"
-    
+
+
 class GrindyChecks(Toggle):
     """
     Turning this on will exclude checks that involve toy freddy using his
     abilities 20 or 40 times.
     """
     display_anme = "Exclude Grindy Checks"
+
+
+class Copyright(Toggle):
+    """
+    Enable copyright songs
+    """
+    display_name = "Copyright Songs"
+
+class Shop(Range):
+    """
+    Change the percentage of the vending machine items cost
+    """
+    display_name = "Shop Percentage"
+    range_start = 1
+    range_end = 1000
+    default = 100
 
 #class DeathLink(Toggle):
 #    """
@@ -95,4 +116,6 @@ class FNaFB2Options (PerGameCommonOptions):
     shadow_bonnie: ShadowBonnie
     levelsanity: Levelsanity
     grindy: GrindyChecks
+    copyright: Copyright
+    shop: Shop
 #    "death_link": DeathLink

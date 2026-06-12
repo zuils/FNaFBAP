@@ -86,7 +86,7 @@ def set_q_rules(world: "FNaFB2World", player: int):
         lambda state: _can_fight_earlygame(world, state, player)
 
     # Story Quests
-    world.get_location("Kid's Cove - Taunt Mangle with Sex Toy").access_rule = \
+    world.get_location("Kid's Cove - Taunt Mangle with the Sex Toy").access_rule = \
         lambda state: state.has("Sex Toy", player, 2)
     world.get_location("Vending Machine - Turn in Sex Toy Voucher").access_rule = \
         lambda state: state.has("Sex Toy Voucher", player) and _can_fight_lategame(world, state, player)
@@ -132,21 +132,11 @@ def set_q_rules(world: "FNaFB2World", player: int):
     # Levelsanity
     if world.options.levelsanity == Toggle.option_true and world.options.difficulty.value < 2:
         for i in range(1, 21):
-            if i < 6:
+            if i < 11:
                 world.get_location(f"The Puppet - Level {i}").access_rule = \
                     lambda state: state.has("The Puppet", player)
-            elif i < 11:
-                world.get_location(f"B.B. - Level {i}").access_rule = \
-                    lambda state: _can_fight_earlygame(world, state, player)
-                world.get_location(f"The Puppet - Level {i}").access_rule = \
-                    lambda state: _can_fight_earlygame(world, state, player) and state.has("The Puppet", player)
-            elif i < 16:
-                world.get_location(f"B.B. - Level {i}").access_rule = \
-                    lambda state: _can_fight_postmidgame(world, state, player)
-                world.get_location(f"The Puppet - Level {i}").access_rule = \
-                    lambda state: _can_fight_postmidgame(world, state, player) and state.has("The Puppet", player)
             else:
                 world.get_location(f"B.B. - Level {i}").access_rule = \
-                    lambda state: _can_fight_lategame(world, state, player)
+                    lambda state: state.has("Token Throw", player) or state.has("Flying Fright", player)
                 world.get_location(f"The Puppet - Level {i}").access_rule = \
                     lambda state: _can_fight_lategame(world, state, player) and state.has("The Puppet", player)
