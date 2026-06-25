@@ -35,12 +35,12 @@ item_table: Dict[str, FNaFB2ItemData] = {
     "Withered Foxy":                    FNaFB2ItemData(["TFScenario", "Party"],                 766783_006, ItemClassification.progression),
 
     # Weapons
-    "Progressive Microphone":           FNaFB2ItemData(["TFScenario", "TFreddyWeapons"],        766783_007, ItemClassification.progression,                 7),
-    "Progressive Guitar":               FNaFB2ItemData(["TFScenario", "TBonnieWeapons"],        766783_008, ItemClassification.progression,                 7),
+    "Progressive Microphone":           FNaFB2ItemData(["TFScenario", "TFreddyWeapons"],        766783_007, ItemClassification.progression,                 6),
+    "Progressive Guitar":               FNaFB2ItemData(["TFScenario", "TBonnieWeapons"],        766783_008, ItemClassification.progression,                 6),
     # First progressive cupcake is to recruit Toy Chica
-    "Progressive Cupcakes":             FNaFB2ItemData(["TFScenario", "TChicaWeapons"],         766783_009, ItemClassification.progression,                 8),
-    "Progressive Hook":                 FNaFB2ItemData(["TFScenario", "MangleWeapons"],         766783_010, ItemClassification.progression,                 7),
-    "Progressive Dragon Dildo":         FNaFB2ItemData(["TFScenario", "FreddyWeapons"],         766783_011, ItemClassification.progression,                 7),
+    "Progressive Cupcakes":             FNaFB2ItemData(["TFScenario", "TChicaWeapons"],         766783_009, ItemClassification.progression,                 7),
+    "Progressive Hook":                 FNaFB2ItemData(["TFScenario", "MangleWeapons"],         766783_010, ItemClassification.progression,                 6),
+    "Progressive Dragon Dildo":         FNaFB2ItemData(["TFScenario", "FreddyWeapons"],         766783_011, ItemClassification.progression,                 6),
     "Progressive Rod of Femininity":    FNaFB2ItemData(["TFScenario", "FreddyWeapons"],         766783_012, ItemClassification.progression,                 2),
     "Stick":                            FNaFB2ItemData("TFreddyWeapons",                        766783_013, ItemClassification.progression),
 

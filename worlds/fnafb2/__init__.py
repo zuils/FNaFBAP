@@ -4,7 +4,7 @@ from BaseClasses import Tutorial, Location, LocationProgressType, CollectionStat
 from worlds.AutoWorld import WebWorld, World
 from .Items import FNaFB2Item, FNaFB2ItemData, get_items_by_category, item_table
 from .Locations import FNaFB2Location, location_table
-from .Options import FNaFB2Options
+from .Options import FNaFB2Options, Toggle
 from .Regions import create_regions
 from .Rules import set_rules
 
@@ -35,6 +35,10 @@ class FNaFB2World(World):
 
     item_name_to_id = {name: data.code for name, data in item_table.items()}
     location_name_to_id = {name: data.code for name, data in location_table.items()}
+
+    def generate_early(self):
+        if self.options.levelsanity.value == Toggle.option_false:
+            self.options.grindy.value = Toggle.option_false
 
     def fill_slot_data(self) -> dict:
         return self.options.as_dict("scenario", "goal", "trade_quest", "difficulty", "fem_rods", "extra_checks",
@@ -75,8 +79,6 @@ class FNaFB2World(World):
             item_pool += [self.create_item(name) for _ in range(quantity)]
         while len(item_pool) < total_locations:
             item_pool.append(self.create_item(self.get_filler_item_name()))
-        
-        print(f"Item Pool: {len(item_pool)}")
 
         self.multiworld.itempool += item_pool
 
