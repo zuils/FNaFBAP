@@ -80,6 +80,7 @@ class GrindyChecks(Toggle):
     """
     Turning this on will exclude checks that involve toy freddy using his
     abilities 20 or 40 times.
+    This setting will always be off if levelsanity is off.
     """
     display_anme = "Exclude Grindy Checks"
 
