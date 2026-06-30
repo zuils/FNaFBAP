@@ -31,6 +31,26 @@ def _can_fight_endgame(world: "FNaFB2World", state: CollectionState, player: int
     return can_fight_endgame(world, state, player)
 
 
+def camera_count(world: "FNaFB2World", state: CollectionState, player: int) -> int:
+    camera_locations = (
+        "Show Stage - Camera",
+        "Game Room - Camera",
+        "Prize Corner - Camera",
+        "Main Hall - Camera",
+        "Kid's Cove - Camera",
+        "Parts/Service - Camera",
+        "Office - Camera",
+        "Left Vent - Camera",
+        "Right Vent - Camera",
+        "Party Room 1 - Camera",
+        "Party Room 2 - Camera",
+        "Party Room 3 - Camera",
+        "Party Room 4 - Camera",
+    )
+    
+    return sum(1 for location_name in camera_locations if state.can_reach_location(location_name, player))
+
+
 def set_q_rules(world: "FNaFB2World", player: int):
     # Bosses
     world.get_location("Party Room 4 - Withered Foxy").access_rule = \
@@ -140,3 +160,14 @@ def set_q_rules(world: "FNaFB2World", player: int):
                     lambda state: state.has("Token Throw", player) or state.has("Flying Fright", player)
                 world.get_location(f"The Puppet - Level {i}").access_rule = \
                     lambda state: _can_fight_lategame(world, state, player) and state.has("The Puppet", player)
+
+        for location_name, min_cameras in [
+            ("B.B. - Learn Curing Wing", 1),
+            ("B.B. - Learn Smoke Lens", 3),
+            ("B.B. - Learn Poison Lens", 5),
+            ("B.B. - Learn Raising Wing", 7),
+            ("B.B. - Learn Confusion Lens", 9),
+            ("B.B. - Learn Spread Bomb", 11)
+        ]:
+            world.get_location(location_name).access_rule = \
+                lambda state, min_cameras=min_cameras: camera_count(world, state, player) >= min_cameras
