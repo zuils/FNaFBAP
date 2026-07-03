@@ -30,7 +30,7 @@ def _can_fight_endgame(world: "FNaFB2World", state: CollectionState, player: int
     from .Rules import can_fight_endgame
     return can_fight_endgame(world, state, player)
 
-def set_normal_rules(world: "FNaFB2World", player: int):
+def set_tf_rules(world: "FNaFB2World", player: int):
     # Bosses
     world.get_location("Party Room 4 - Withered Foxy").access_rule = \
         lambda state: _can_fight_midgame(world, state, player) and state.has("Sex Toy", player)
@@ -269,11 +269,11 @@ def set_normal_rules(world: "FNaFB2World", player: int):
                 world.get_location(f"Mangle - Level {i}").access_rule = \
                     lambda state: _can_fight_almostlategame(world, state, player) and state.has("Mangle", player)
         
-        world.get_location("Toy Freddy - Tophat Dash").access_rule = \
+        world.get_location("Toy Freddy - Learn Tophat Dash").access_rule = \
             lambda state: _can_fight_earlygame(world, state, player)
-        world.get_location("Toy Freddy - Tophat Crash").access_rule = \
+        world.get_location("Toy Freddy - Learn Tophat Crash").access_rule = \
             lambda state: _can_fight_midgame(world, state, player)
-        world.get_location("Toy Freddy - Tophat Smash").access_rule = \
+        world.get_location("Toy Freddy - Learn Tophat Smash").access_rule = \
             lambda state: _can_fight_lategame(world, state, player)
         world.get_location("Toy Freddy - Use Tophat Slash 20 times").access_rule = \
             lambda state: state.has("Progressive Tophat Slash", player)
@@ -292,38 +292,38 @@ def set_normal_rules(world: "FNaFB2World", player: int):
         world.get_location("Toy Freddy - Use Tophat Smash 40 times").access_rule = \
             lambda state: state.has("Progressive Tophat Smash", player)
 
-        world.get_location("Mangle - Electroshock").access_rule = \
+        world.get_location("Mangle - Learn Electroshock").access_rule = \
             lambda state: state.has("Mangle", player)
-        world.get_location("Mangle - Paravolt").access_rule = \
+        world.get_location("Mangle - Learn Paravolt").access_rule = \
             lambda state: _can_fight_earlygame(world, state, player) and state.has("Mangle", player)
-        world.get_location("Mangle - Somnojolt").access_rule = \
+        world.get_location("Mangle - Learn Somnojolt").access_rule = \
             lambda state: _can_fight_midgame(world, state, player) and state.has("Mangle", player)
-        world.get_location("Mangle - Lightningbolt").access_rule = \
+        world.get_location("Mangle - Learn Lightningbolt").access_rule = \
             lambda state: _can_fight_almostlategame(world, state, player) and state.has("Mangle", player)
         
-        world.get_location("Toy Chica - Healing Wing").access_rule = \
+        world.get_location("Toy Chica - Learn Healing Wing").access_rule = \
             lambda state: state.has("Toy Chica", player)
-        world.get_location("Toy Chica - Curing Wing").access_rule = \
+        world.get_location("Toy Chica - Learn Curing Wing").access_rule = \
             lambda state: _can_fight_earlygame(world, state, player) and state.has("Toy Chica", player)
-        world.get_location("Toy Chica - Raising Wing").access_rule = \
+        world.get_location("Toy Chica - Learn Raising Wing").access_rule = \
             lambda state: _can_fight_midgame(world, state, player) and state.has("Toy Chica", player)
-        world.get_location("Toy Chica - Recovery Wing").access_rule = \
+        world.get_location("Toy Chica - Learn Recovery Wing").access_rule = \
             lambda state: _can_fight_almostlategame(world, state, player) and state.has("Toy Chica", player)
         
-        world.get_location("Toy Bonnie - Grab Bag").access_rule = \
+        world.get_location("Toy Bonnie - Learn Grab Bag").access_rule = \
             lambda state: state.has("Toy Bonnie", player)
-        world.get_location("Toy Bonnie - Status Bomb").access_rule = \
+        world.get_location("Toy Bonnie - Learn Status Bomb").access_rule = \
             lambda state: _can_fight_earlygame(world, state, player) and state.has("Toy Bonnie", player)
-        world.get_location("Toy Bonnie - Spread Bomb").access_rule = \
+        world.get_location("Toy Bonnie - Learn Spread Bomb").access_rule = \
             lambda state: _can_fight_midgame(world, state, player) and state.has("Toy Bonnie", player)
-        world.get_location("Toy Bonnie - Timer Flip").access_rule = \
+        world.get_location("Toy Bonnie - Learn Timer Flip").access_rule = \
             lambda state: _can_fight_almostlategame(world, state, player) and state.has("Toy Bonnie", player)
         
-        world.get_location("Toy Freddy - Death Inhale").access_rule = \
+        world.get_location("Toy Freddy - Learn Death Inhale").access_rule = \
             lambda state: state.has("Tophat Keystone", player)
-        world.get_location("Toy Bonnie - Terror Fever").access_rule = \
+        world.get_location("Toy Bonnie - Learn Terror Fever").access_rule = \
             lambda state: state.has("Terror Keystone", player) and state.has("Toy Bonnie", player)
-        world.get_location("Toy Chica - Avian Strike").access_rule = \
+        world.get_location("Toy Chica - Learn Avian Strike").access_rule = \
             lambda state: state.has("Avian Keystone", player) and state.has("Toy Chica", player)
-        world.get_location("Mangle - Disassembly").access_rule = \
+        world.get_location("Mangle - Learn Disassembly").access_rule = \
             lambda state: state.has("Assembly Keystone", player) and state.has("Mangle", player)

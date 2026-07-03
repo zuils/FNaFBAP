@@ -61,6 +61,9 @@ class FNaFB2World(World):
             quantity = data.max_quantity
             category = data.category
             
+            if name == "Sex Toy Voucher" and self.options.scenario.value == 1:
+                quantity = 1
+            
             # If difficulty is standard, remove the cassettes, lucky soda, and double pizza
             if self.options.difficulty.value == 0 and (category == "Cassette" \
                 or "Lucky Soda" in name or "Double Pizza" in name):

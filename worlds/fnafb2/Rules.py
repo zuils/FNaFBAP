@@ -1,6 +1,6 @@
 from BaseClasses import CollectionState, MultiWorld, Location, Region, Item
 from .Regions import connect_regions
-from .Normal_Rules import set_normal_rules
+from .TF_Rules import set_tf_rules
 from .Q_Rules import set_q_rules
 from Options import Toggle
 from typing import TYPE_CHECKING
@@ -27,11 +27,15 @@ def freddy_attack(state: CollectionState, player: int) -> int:
     mic = state.count("Progressive Microphone", player)
     rod = state.count("Progressive Rod of Femininity", player)
     dragon = state.count("Progressive Dragon Dildo", player)
-    
-    mic_damage = [0, 1, 2, 3, 4, 5, 6][mic]
-    rod_damage = [0, 5, 6][rod]
-    dragon_damage = [0, 3, 4, 5, 5, 6, 6][dragon]
-    
+
+    mic_table = [0, 1, 2, 3, 4, 5, 6]
+    rod_table = [0, 5, 6]
+    dragon_table = [0, 3, 4, 5, 5, 6, 6]
+
+    mic_damage = mic_table[min(mic, len(mic_table) - 1)]
+    rod_damage = rod_table[min(rod, len(rod_table) - 1)]
+    dragon_damage = dragon_table[min(dragon, len(dragon_table) - 1)]
+
     return max(mic_damage, rod_damage, dragon_damage)
 
 # Check if the player has the party members before adding their power to the calculation
@@ -101,13 +105,20 @@ def skills(world: "FNaFB2World", state: CollectionState, player: int) -> int:
         return (
             state.count("Token Throw", player)
             + state.count("Flying Fright", player)
+            + state.count("Raising Wing", player)
+            + state.count("B.B. - Curing Wing", player)
+            + state.count("B.B. - Poison Lens", player)
+            + state.count("B.B. - Smoke Lens", player)
+            + state.count("B.B. - Confusion Lens", player)
+            + state.count("B.B. - Spread Bomb", player)
             + state.count("The Puppet", player) * (
-                state.count("Poison Lens", player)
-                + state.count("Spread Bomb", player)
-                + state.count("Smoke Lens", player)
-                + state.count("Confusion Lens", player)
+                state.count("The Puppet - Curing Wing", player)
+                + state.count("The Puppet - Poison Lens", player)
+                + state.count("The Puppet - Spread Bomb", player)
+                + state.count("The Puppet - Smoke Lens", player)
+                + state.count("The Puppet - Confusion Lens", player)
                 + state.count("Death", player) * 5 # Death has a 70% chance to instakill every enemy including bosses
-                + state.count("Toredor March", player)
+                + state.count("Toreador March", player)
             )
         )
 
@@ -152,7 +163,7 @@ def can_fight_almostlategame(world: "FNaFB2World", state: CollectionState, playe
             and skills(world, state, player) >= 6
         )
     else:
-        return party_count(world, state, player) > 1 and skills(world, state, player) >= 6
+        return party_count(world, state, player) > 1 and skills(world, state, player) >= 8
 
 def can_fight_lategame(world: "FNaFB2World", state: CollectionState, player: int) -> bool:
     if world.options.scenario.value == 0:
@@ -163,7 +174,7 @@ def can_fight_lategame(world: "FNaFB2World", state: CollectionState, player: int
             and skills(world, state, player) >= 20
         )
     else:
-        return party_count(world, state, player) > 1 and skills(world, state, player) >= 8
+        return party_count(world, state, player) > 1 and skills(world, state, player) >= 12
 
 def can_fight_endgame(world: "FNaFB2World", state: CollectionState, player: int) -> bool:
     if world.options.scenario.value == 0:
@@ -174,11 +185,11 @@ def can_fight_endgame(world: "FNaFB2World", state: CollectionState, player: int)
             and skills(world, state, player) >= 25
         )
     else:
-        return party_count(world, state, player) > 1 and skills(world, state, player) >= 10
+        return party_count(world, state, player) > 1 and skills(world, state, player) >= 15 and state.has("Death", player)
 
 def set_rules(world: "FNaFB2World", player: int):
     if world.options.scenario.value == 0:
-        set_normal_rules(world, player)
+        set_tf_rules(world, player)
     else:
         set_q_rules(world, player)
     
