@@ -27,11 +27,15 @@ def freddy_attack(state: CollectionState, player: int) -> int:
     mic = state.count("Progressive Microphone", player)
     rod = state.count("Progressive Rod of Femininity", player)
     dragon = state.count("Progressive Dragon Dildo", player)
-    
-    mic_damage = [0, 1, 2, 3, 4, 5, 6][mic]
-    rod_damage = [0, 5, 6][rod]
-    dragon_damage = [0, 3, 4, 5, 5, 6, 6][dragon]
-    
+
+    mic_table = [0, 1, 2, 3, 4, 5, 6]
+    rod_table = [0, 5, 6]
+    dragon_table = [0, 3, 4, 5, 5, 6, 6]
+
+    mic_damage = mic_table[min(mic, len(mic_table) - 1)]
+    rod_damage = rod_table[min(rod, len(rod_table) - 1)]
+    dragon_damage = dragon_table[min(dragon, len(dragon_table) - 1)]
+
     return max(mic_damage, rod_damage, dragon_damage)
 
 # Check if the player has the party members before adding their power to the calculation

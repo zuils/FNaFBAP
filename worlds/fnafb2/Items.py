@@ -40,8 +40,8 @@ item_table: Dict[str, FNaFB2ItemData] = {
     # First progressive cupcake is to recruit Toy Chica
     "Progressive Cupcakes":             FNaFB2ItemData(["TFScenario", "TChicaWeapons"],          766783_009, ItemClassification.progression,                 7),
     "Progressive Hook":                 FNaFB2ItemData(["TFScenario", "MangleWeapons"],          766783_010, ItemClassification.progression,                 6),
-    "Progressive Dragon Dildo":         FNaFB2ItemData(["TFScenario", "FreddyWeapons"],          766783_011, ItemClassification.progression,                 6),
-    "Progressive Rod of Femininity":    FNaFB2ItemData(["TFScenario", "FreddyWeapons"],          766783_012, ItemClassification.progression,                 2),
+    "Progressive Dragon Dildo":         FNaFB2ItemData(["TFScenario", "FreddyWeapons"],          766783_011, ItemClassification.progression_skip_balancing,  6),
+    "Progressive Rod of Femininity":    FNaFB2ItemData(["TFScenario", "FreddyWeapons"],          766783_012, ItemClassification.progression_skip_balancing,  2),
     "Stick":                            FNaFB2ItemData("TFreddyWeapons",                         766783_013, ItemClassification.progression),
 
 
