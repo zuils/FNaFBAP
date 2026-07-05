@@ -285,7 +285,7 @@ def set_tf_rules(world: "FNaFB2World", player: int):
             lambda state: state.has("Progressive Tophat Dash", player)
         world.get_location("Toy Freddy - Use Tophat Crash 20 times").access_rule = \
             lambda state: state.has("Progressive Tophat Crash", player)
-        world.get_location("Toy Freddy - Use Tophat Dash 40 times").access_rule = \
+        world.get_location("Toy Freddy - Use Tophat Crash 40 times").access_rule = \
             lambda state: state.has("Progressive Tophat Crash", player)
         world.get_location("Toy Freddy - Use Tophat Smash 20 times").access_rule = \
             lambda state: state.has("Progressive Tophat Smash", player)
