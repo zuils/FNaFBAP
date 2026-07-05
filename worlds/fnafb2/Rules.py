@@ -244,10 +244,10 @@ def set_rules(world: "FNaFB2World", player: int):
         connect_regions(world, "Party Room 4", "Party Room 4 Critical")
         connect_regions(world, "Office", "Office Critical")
     if world.options.scenario.value == 0:
-        connect_regions(world, "Kid's Cove", "Kid's Cove B.B.", lambda state: state.has("Kid's Cove B.B.", player))
-        connect_regions(world, "Main Hall", "Main Hall B.B.", lambda state: state.has("Main Hall B.B.", player))
-        connect_regions(world, "Party Room 3", "Party Room 3 B.B.", lambda state: state.has("Party Room 3 B.B.", player))
-        connect_regions(world, "Office", "Office B.B.", lambda state: state.has("Office B.B.", player))
+        connect_regions(world, "Kid's Cove", "Kid's Cove B.B.", lambda state: state.has("Kid's Cove B.B.", player) and can_fight_almostlategame(world, state, player))
+        connect_regions(world, "Main Hall", "Main Hall B.B.", lambda state: state.has("Main Hall B.B.", player) and can_fight_earlygame(world, state, player))
+        connect_regions(world, "Party Room 3", "Party Room 3 B.B.", lambda state: state.has("Party Room 3 B.B.", player) and can_fight_midgame(world, state, player))
+        connect_regions(world, "Office", "Office B.B.", lambda state: state.has("Office B.B.", player) and can_fight_lategame(world, state, player))
         if world.options.goal.value == 1:
             connect_regions(world, "B.B. Giygas", "Refurbs")
 
