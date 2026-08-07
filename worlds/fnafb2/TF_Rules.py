@@ -50,19 +50,38 @@ def set_tf_rules(world: "FNaFB2World", player: int):
                 + state.count("Progressive Caffeine Sodas", player)
                 ) >= 10
         )
+    
+    def camera_count(state: CollectionState, player: int) -> int:
+        camera_locations = (
+            "Show Stage - Camera",
+            "Game Room - Camera",
+            "Prize Corner - Camera",
+            "Main Hall - Camera",
+            "Kid's Cove - Camera",
+            "Parts/Service - Camera",
+            "Office - Camera",
+            "Left Vent - Camera",
+            "Right Vent - Camera",
+            "Party Room 1 - Camera",
+            "Party Room 2 - Camera",
+            "Party Room 3 - Camera",
+            "Party Room 4 - Camera",
+        )
+
+        return sum(1 for location_name in camera_locations if state.can_reach_location(location_name, player))
 
     world.get_location("Show Stage - The Puppet").access_rule = \
         lambda state: _can_fight_lategame(world, state, player)
     world.get_location("Women's Bathroom - The Puppet (Rod of Femininity A)").access_rule = \
         lambda state: _can_fight_lategame(world, state, player)
     world.get_location("Party Room 1 - Withered Bonnie").access_rule = \
-        lambda state: _can_fight_lategame(world, state, player) and state.has("Toy Bonnie", player)
+        lambda state: camera_count(state, player) >= 10 and state.has("Toy Bonnie", player)
     world.get_location("Party Room 2 - Withered Chica").access_rule = \
-        lambda state: _can_fight_lategame(world, state, player) and state.has("Toy Chica", player)
+        lambda state: camera_count(state, player) >= 11 and state.has("Toy Chica", player)
     world.get_location("Party Room 3 - Withered Freddy").access_rule = \
-        lambda state: _can_fight_lategame(world, state, player)
+        lambda state: camera_count(state, player) >= 12
     world.get_location("Party Room 4 - Withered Foxy Rematch").access_rule = \
-        lambda state: _can_fight_lategame(world, state, player) and state.has("Mangle", player)
+        lambda state: camera_count(state, player) >= 13 and state.has("Mangle", player)
     world.get_location("Show Stage - The Second Puppet").access_rule = \
         lambda state: _can_fight_endgame(world, state, player)
     world.get_location("Women's Bathroom - The Second Puppet (Rod of Femininity B)").access_rule = \

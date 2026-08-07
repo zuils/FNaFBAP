@@ -31,7 +31,7 @@ def _can_fight_endgame(world: "FNaFB2World", state: CollectionState, player: int
     return can_fight_endgame(world, state, player)
 
 
-def camera_count(world: "FNaFB2World", state: CollectionState, player: int) -> int:
+def camera_count(state: CollectionState, player: int) -> int:
     camera_locations = (
         "Show Stage - Camera",
         "Game Room - Camera",
@@ -56,13 +56,13 @@ def set_q_rules(world: "FNaFB2World", player: int):
     world.get_location("Party Room 4 - Withered Foxy").access_rule = \
         lambda state: _can_fight_midgame(world, state, player) and state.has("Sex Toy", player)
     world.get_location("Party Room 1 - Withered Bonnie").access_rule = \
-        lambda state: _can_fight_almostlategame(world, state, player)
+        lambda state: camera_count(state, player) >= 10
     world.get_location("Party Room 2 - Withered Chica").access_rule = \
-        lambda state: _can_fight_almostlategame(world, state, player)
+        lambda state: camera_count(state, player) >= 11
     world.get_location("Party Room 3 - Withered Freddy").access_rule = \
-        lambda state: _can_fight_almostlategame(world, state, player)
+        lambda state: camera_count(state, player) >= 12
     world.get_location("Party Room 4 - Withered Foxy Rematch").access_rule = \
-        lambda state: _can_fight_lategame(world, state, player)
+        lambda state: camera_count(state, player) >= 13
     
     # Cameras
     world.get_location("Show Stage - Camera").access_rule = \
@@ -170,4 +170,4 @@ def set_q_rules(world: "FNaFB2World", player: int):
             ("B.B. - Learn Spread Bomb", 11)
         ]:
             world.get_location(location_name).access_rule = \
-                lambda state, min_cameras=min_cameras: camera_count(world, state, player) >= min_cameras
+                lambda state, min_cameras=min_cameras: camera_count(state, player) >= min_cameras
