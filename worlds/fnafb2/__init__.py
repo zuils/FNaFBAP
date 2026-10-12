@@ -2,8 +2,8 @@ from typing import List
 
 from BaseClasses import Tutorial, Location, LocationProgressType, CollectionState, MultiWorld, ItemClassification
 from worlds.AutoWorld import WebWorld, World
-from .Items import FNaFB2Item, FNaFB2ItemData, get_items_by_category, item_table
-from .Locations import FNaFB2Location, location_table
+from .Items import FNaFB2Item, get_items_by_category, item_table
+from .Locations import location_table
 from .Options import FNaFB2Options, Toggle
 from .Regions import create_regions
 from .Rules import set_rules
@@ -42,7 +42,7 @@ class FNaFB2World(World):
 
     def fill_slot_data(self) -> dict:
         return self.options.as_dict("scenario", "goal", "trade_quest", "difficulty", "fem_rods", "extra_checks",
-                                    "shadow_bonnie", "levelsanity", "grindy", "copyright", "shop")
+                                    "shadow_bonnie", "levelsanity", "grindy", "copyright", "shop", "office_camera")
 
     def create_items(self):
         if self.options.scenario.value == 0:

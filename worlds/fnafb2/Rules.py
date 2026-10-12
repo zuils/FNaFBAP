@@ -4,6 +4,7 @@ from .TF_Rules import set_tf_rules
 from .Q_Rules import set_q_rules
 from Options import Toggle
 from typing import TYPE_CHECKING
+from rule_builder.rules import Has
 
 if TYPE_CHECKING:
     from . import FNaFB2World
