@@ -1,348 +1,214 @@
-from BaseClasses import CollectionState, MultiWorld, Location, Region, Item
 from typing import TYPE_CHECKING
 from .Options import Toggle
+from rule_builder.rules import CanReachLocation, Has, HasFromList
 
 if TYPE_CHECKING:
     from . import FNaFB2World
 
-# I LOVE CIRCULAR IMPORTS WOOOOOOOOO
-def _can_fight_earlygame(world: "FNaFB2World", state: CollectionState, player: int) -> bool:
-    from .Rules import can_fight_earlygame
-    return can_fight_earlygame(world, state, player)
-
-def _can_fight_midgame(world: "FNaFB2World", state: CollectionState, player: int) -> bool:
-    from .Rules import can_fight_midgame
-    return can_fight_midgame(world, state, player)
-
-def _can_fight_postmidgame(world: "FNaFB2World", state: CollectionState, player: int) -> bool:
-    from .Rules import can_fight_postmidgame
-    return can_fight_postmidgame(world, state, player)
-
-def _can_fight_almostlategame(world: "FNaFB2World", state: CollectionState, player: int) -> bool:
-    from .Rules import can_fight_almostlategame
-    return can_fight_almostlategame(world, state, player)
-
-def _can_fight_lategame(world: "FNaFB2World", state: CollectionState, player: int) -> bool:
-    from .Rules import can_fight_lategame
-    return can_fight_lategame(world, state, player)
-
-def _can_fight_endgame(world: "FNaFB2World", state: CollectionState, player: int) -> bool:
-    from .Rules import can_fight_endgame
-    return can_fight_endgame(world, state, player)
-
 def set_tf_rules(world: "FNaFB2World", player: int):
+    from .Rules import CameraCount, FightStage
+
+    def set_rule(location_name: str, rule) -> None:
+        world.set_rule(world.get_location(location_name), rule)
+
+    early = FightStage("earlygame")
+    mid = FightStage("midgame")
+    postmid = FightStage("postmidgame")
+    almostlate = FightStage("almostlategame")
+    late = FightStage("lategame")
+    end = FightStage("endgame")
+
     # Bosses
-    world.get_location("Party Room 4 - Withered Foxy").access_rule = \
-        lambda state: _can_fight_midgame(world, state, player) and state.has("Sex Toy", player)
+    set_rule("Party Room 4 - Withered Foxy", mid & Has("Sex Toy"))
 
     # You can only fight Splash Woman with toy freddy
-    world.get_location("Women's Bathroom - Splash Woman").access_rule = \
-        lambda state: (
-            (state.count("Progressive Tophat Slash", player)
-            + state.count("Progressive Tophat Dash", player)
-            + state.count("Progressive Tophat Crash", player)
-            + state.count("Progressive Tophat Smash", player)) >= 3
-            and state.count("Progressive Microphone", player) >= 3
-            and (
-                state.count("Progressive Body Endoskeletons", player)
-                + state.count("Progressive Head Endoskeletons", player)
-                + state.count("Progressive Pizza Shields", player)
-                + state.count("Progressive Caffeine Sodas", player)
-                ) >= 10
-        )
-    
-    def camera_count(state: CollectionState, player: int) -> int:
-        camera_locations = (
-            "Show Stage - Camera",
-            "Game Room - Camera",
-            "Prize Corner - Camera",
-            "Main Hall - Camera",
-            "Kid's Cove - Camera",
-            "Parts/Service - Camera",
-            "Office - Camera",
-            "Left Vent - Camera",
-            "Right Vent - Camera",
-            "Party Room 1 - Camera",
-            "Party Room 2 - Camera",
-            "Party Room 3 - Camera",
-            "Party Room 4 - Camera",
-        )
+    set_rule("Women's Bathroom - Splash Woman", 
+        HasFromList(
+            "Progressive Tophat Slash",
+            "Progressive Tophat Dash",
+            "Progressive Tophat Crash",
+            "Progressive Tophat Smash",
+            count=3,
+        ) & Has("Progressive Microphone", count=3) 
+        & HasFromList(
+            "Progressive Body Endoskeletons",
+            "Progressive Head Endoskeletons",
+            "Progressive Pizza Shields",
+            "Progressive Caffeine Sodas",
+            count=10,
+        ),
+    )
+    set_rule("Show Stage - The Puppet", late)
+    set_rule("Women's Bathroom - The Puppet (Rod of Femininity A)", late)
+    set_rule("Party Room 1 - Withered Bonnie", CameraCount(10) & Has("Toy Bonnie"))
+    set_rule("Party Room 2 - Withered Chica", CameraCount(11) & Has("Toy Chica"))
+    set_rule("Party Room 3 - Withered Freddy", CameraCount(12))
+    set_rule("Party Room 4 - Withered Foxy Rematch", CameraCount(13) & Has("Mangle"))
+    set_rule("Show Stage - The Second Puppet", end)
+    set_rule("Women's Bathroom - The Second Puppet (Rod of Femininity B)", end)
+    set_rule("Parts/Service - Boss Rush", end)
 
-        return sum(1 for location_name in camera_locations if state.can_reach_location(location_name, player))
-
-    world.get_location("Show Stage - The Puppet").access_rule = \
-        lambda state: _can_fight_lategame(world, state, player)
-    world.get_location("Women's Bathroom - The Puppet (Rod of Femininity A)").access_rule = \
-        lambda state: _can_fight_lategame(world, state, player)
-    world.get_location("Party Room 1 - Withered Bonnie").access_rule = \
-        lambda state: camera_count(state, player) >= 10 and state.has("Toy Bonnie", player)
-    world.get_location("Party Room 2 - Withered Chica").access_rule = \
-        lambda state: camera_count(state, player) >= 11 and state.has("Toy Chica", player)
-    world.get_location("Party Room 3 - Withered Freddy").access_rule = \
-        lambda state: camera_count(state, player) >= 12
-    world.get_location("Party Room 4 - Withered Foxy Rematch").access_rule = \
-        lambda state: camera_count(state, player) >= 13 and state.has("Mangle", player)
-    world.get_location("Show Stage - The Second Puppet").access_rule = \
-        lambda state: _can_fight_endgame(world, state, player)
-    world.get_location("Women's Bathroom - The Second Puppet (Rod of Femininity B)").access_rule = \
-        lambda state: _can_fight_endgame(world, state, player)
-    world.get_location("Parts/Service - Boss Rush").access_rule = \
-        lambda state: _can_fight_endgame(world, state, player)
     # Shops
-    world.get_location("Kid's Cove - Protection Hat").access_rule = \
-        lambda state: _can_fight_almostlategame(world, state, player)
-    world.get_location("Main Hall - Protection Hat").access_rule = \
-        lambda state: _can_fight_earlygame(world, state, player)
-    world.get_location("Party Room 3 - Protection Hat").access_rule = \
-        lambda state: _can_fight_midgame(world, state, player)
-    world.get_location("Office - Protection Hat").access_rule = \
-        lambda state: _can_fight_lategame(world, state, player)
+    set_rule("Kid's Cove - Protection Hat", almostlate)
+    set_rule("Main Hall - Protection Hat", early)
+    set_rule("Party Room 3 - Protection Hat", mid)
+    set_rule("Office - Protection Hat", late)
     
     # Cameras
-    world.get_location("Show Stage - Camera").access_rule = \
-        lambda state: _can_fight_midgame(world, state, player)
-    world.get_location("Game Room - Camera").access_rule = \
-        lambda state: _can_fight_midgame(world, state, player)
-    world.get_location("Prize Corner - Camera").access_rule = \
-        lambda state: _can_fight_midgame(world, state, player)
-    world.get_location("Main Hall - Camera").access_rule = \
-        lambda state: _can_fight_midgame(world, state, player)
-    world.get_location("Kid's Cove - Camera").access_rule = \
-        lambda state: _can_fight_almostlategame(world, state, player)
-    world.get_location("Parts/Service - Camera").access_rule = \
-        lambda state: _can_fight_midgame(world, state, player)
-    world.get_location("Office - Camera").access_rule = \
-        lambda state: _can_fight_lategame(world, state, player)
-    world.get_location("Left Vent - Camera").access_rule = \
-        lambda state: _can_fight_lategame(world, state, player)
-    world.get_location("Right Vent - Camera").access_rule = \
-        lambda state: _can_fight_lategame(world, state, player)
-    world.get_location("Party Room 1 - Camera").access_rule = \
-        lambda state: _can_fight_postmidgame(world, state, player)
-    world.get_location("Party Room 2 - Camera").access_rule = \
-        lambda state: _can_fight_postmidgame(world, state, player)
-    world.get_location("Party Room 3 - Camera").access_rule = \
-        lambda state: _can_fight_postmidgame(world, state, player)
-    world.get_location("Party Room 4 - Camera").access_rule = \
-        lambda state: _can_fight_postmidgame(world, state, player)
+    for location_name in (
+        "Show Stage - Camera",
+        "Game Room - Camera",
+        "Prize Corner - Camera",
+        "Main Hall - Camera",
+        "Parts/Service - Camera",
+    ):
+        set_rule(location_name, mid)
+    for location_name in (
+        "Party Room 1 - Camera",
+        "Party Room 2 - Camera",
+        "Party Room 3 - Camera",
+        "Party Room 4 - Camera",
+    ):
+        set_rule(location_name, postmid)
+    set_rule("Kid's Cove - Camera", almostlate)
+    for location_name in ("Office - Camera", "Left Vent - Camera", "Right Vent - Camera"):
+        set_rule(location_name, late)
 
     # General
     if world.options.difficulty.value > 0:
-        world.get_location("Show Stage - Lucky Soda Chest").access_rule = \
-            lambda state: _can_fight_almostlategame(world, state, player)
-        world.get_location("Show Stage - Double Pizza Chest").access_rule = \
-            lambda state: _can_fight_lategame(world, state, player)
-    world.get_location("Women's Bathroom - Toy Chica").access_rule = \
-        lambda state: state.can_reach_location("Women's Bathroom - Splash Woman", player) and (state.has("Progressive Cupcakes", player) or _can_fight_lategame(world, state, player))
-    world.get_location("Right Vent - Toy Bonnie").access_rule = \
-        lambda state: state.has("Stick", player)
+        set_rule("Show Stage - Lucky Soda Chest", almostlate)
+        set_rule("Show Stage - Double Pizza Chest", late)
+    set_rule(
+        "Women's Bathroom - Toy Chica",
+        CanReachLocation("Women's Bathroom - Splash Woman")
+        & (Has("Progressive Cupcakes") | late),
+    )
+    set_rule("Right Vent - Toy Bonnie", Has("Stick"))
 
-    world.get_location("Cave of the Past - Dragon Dildo A").access_rule = \
-        lambda state: state.has("Stick", player)
-    world.get_location("Cave of the Past - Dragon Dildo B").access_rule = \
-        lambda state: state.has("Progressive Dragon Dildo", player)
-    world.get_location("Cave of the Past - Dragon Dildo C").access_rule = \
-        lambda state: state.has("Progressive Dragon Dildo", player, 2)
-    world.get_location("Cave of the Past - Dragon Dildo D").access_rule = \
-        lambda state: state.has("Progressive Dragon Dildo", player, 3)
-    world.get_location("Cave of the Past - Dragon Dildo E").access_rule = \
-        lambda state: state.has("Progressive Dragon Dildo", player, 4)
-    world.get_location("Cave of the Past - Dragon Dildo F").access_rule = \
-        lambda state: state.has("Progressive Dragon Dildo", player, 5)
+    set_rule("Cave of the Past - Dragon Dildo A", Has("Stick"))
+    for count, suffix in enumerate(("B", "C", "D", "E", "F"), start=1):
+        set_rule(f"Cave of the Past - Dragon Dildo {suffix}", Has("Progressive Dragon Dildo", count=count))
 
     # Story Quests
-    world.get_location("Kid's Cove - Turn in Sex Toy Voucher to B.B.").access_rule = \
-        lambda state: state.can_reach_location("Kid's Cove - Protection Hat", player) \
-            and state.has("Kid's Cove B.B.", player) and state.has("Sex Toy Voucher", player)
-    world.get_location("Kid's Cove - Return Sex Toy").access_rule = \
-        lambda state: state.has("Sex Toy", player, 2)
-    world.get_location("Vending Machine - Turn in Sex Toy Voucher").access_rule = \
-        lambda state: state.has("Sex Toy Voucher", player) and _can_fight_lategame(world, state, player)
+    set_rule(
+        "Kid's Cove - Turn in Sex Toy Voucher to B.B.",
+        CanReachLocation("Kid's Cove - Protection Hat") & Has("Kid's Cove B.B.") & Has("Sex Toy Voucher"),
+    )
+    set_rule("Kid's Cove - Return Sex Toy", Has("Sex Toy", count=2))
+    set_rule("Vending Machine - Turn in Sex Toy Voucher", Has("Sex Toy Voucher") & late)
 
     # Enemy Trade Item Drops
     if world.options.trade_quest == Toggle.option_true:
-        world.get_location("Dining Area - Trade Beta Voucher").access_rule = \
-            lambda state: _can_fight_earlygame(world, state, player)
-        world.get_location("Dining Area - Trade Gamma Voucher").access_rule = \
-            lambda state: _can_fight_midgame(world, state, player)
-        world.get_location("Dining Area - Trade Delta Voucher").access_rule = \
-            lambda state: _can_fight_almostlategame(world, state, player)
-        world.get_location("Dining Area - Trade Omega Voucher").access_rule = \
-            lambda state: _can_fight_lategame(world, state, player)
+        set_rule("Dining Area - Trade Beta Voucher", early)
+        set_rule("Dining Area - Trade Gamma Voucher", mid)
+        set_rule("Dining Area - Trade Delta Voucher", almostlate)
+        set_rule("Dining Area - Trade Omega Voucher", late)
 
     # Cassettes
     if world.options.difficulty.value > 0:
-        world.get_location("Show Stage - Cassette Radar Chest").access_rule = \
-            lambda state: _can_fight_lategame(world, state, player)
-        world.get_location("Kid's Cove - Cassette").access_rule = \
-            lambda state: state.has("Cassette Radar", player)
-        world.get_location("Parts/Service - Cassette").access_rule = \
-            lambda state: state.has("Cassette Radar", player)
-        world.get_location("Men's Bathroom - Cassette").access_rule = \
-            lambda state: state.has("Cassette Radar", player)
-        world.get_location("Women's Bathroom - Cassette").access_rule = \
-            lambda state: state.has("Cassette Radar", player)
-        world.get_location("Office - Cassette").access_rule = \
-            lambda state: state.has("Cassette Radar", player)
-        world.get_location("Office Hall - Cassette").access_rule = \
-            lambda state: state.has("Cassette Radar", player)
-        world.get_location("Party Room 1 - Cassette").access_rule = \
-            lambda state: state.has("Cassette Radar", player)
-        world.get_location("Party Room 2 - Cassette").access_rule = \
-            lambda state: state.has("Cassette Radar", player)
-        world.get_location("Party Room 3 - Cassette").access_rule = \
-            lambda state: state.has("Cassette Radar", player)
-        world.get_location("Party Room 4 - Cassette").access_rule = \
-            lambda state: state.has("Cassette Radar", player)
-        world.get_location("Office - Rap God").access_rule = \
-            lambda state: _can_fight_endgame(world, state, player) and state.has("Cassette Radar", player) and state.has("Cassette", player, 10)
+        set_rule("Show Stage - Cassette Radar Chest", late)
+        for location_name in (
+            "Kid's Cove - Cassette", "Parts/Service - Cassette", "Men's Bathroom - Cassette",
+            "Women's Bathroom - Cassette", "Office - Cassette", "Office Hall - Cassette",
+            "Party Room 1 - Cassette", "Party Room 2 - Cassette", "Party Room 3 - Cassette",
+            "Party Room 4 - Cassette",
+        ):
+            set_rule(location_name, Has("Cassette Radar"))
+        set_rule("Office - Rap God", end & Has("Cassette Radar") & Has("Cassette", count=10))
 
     # Keystones
-    world.get_location("Kid's Cove - Chest").access_rule = \
-        lambda state: _can_fight_almostlategame(world, state, player) and state.has("Mangle", player)
-    world.get_location("Women's Bathroom - Chest").access_rule = \
-        lambda state: _can_fight_almostlategame(world, state, player) and state.has("Toy Chica", player)
-    world.get_location("Office - Left Chest").access_rule = \
-        lambda state: _can_fight_lategame(world, state, player) and state.has("Toy Bonnie", player)
-    world.get_location("Office - Right Chest").access_rule = \
-        lambda state: _can_fight_lategame(world, state, player)
+    set_rule("Kid's Cove - Chest", almostlate & Has("Mangle"))
+    set_rule("Women's Bathroom - Chest", almostlate & Has("Toy Chica"))
+    set_rule("Office - Left Chest", late & Has("Toy Bonnie"))
+    set_rule("Office - Right Chest", late)
         
     # Critical mode
     if world.options.difficulty.value == 2:
         # You can't fight shadow bonnie with toy animatronics and withered freddy in the party
-        world.get_location("Women's Bathroom - Shadow Bonnie").access_rule = \
-            lambda state: (
-                state.has("Progressive Microphone", player, 6)
-                and (state.count("Progressive Tophat Slash", player)
-                    + state.count("Progressive Tophat Dash", player)
-                    + state.count("Progressive Tophat Crash", player)
-                    + state.count("Progressive Tophat Smash", player)) >= 10
-                and state.has("Progressive Body Endoskeletons", player, 4)
-                and state.has("Progressive Head Endoskeletons", player, 4)
-                and state.has("Progressive Pizza Shields", player, 4)
-                and state.has("Progressive Caffeine Sodas", player, 4)
-                and state.has("Withered Bonnie", player)
-                and state.has("Withered Chica", player)
-                and state.has("Withered Foxy", player)
+        set_rule(
+            "Women's Bathroom - Shadow Bonnie",
+            Has("Progressive Microphone", count=6)
+            & HasFromList(
+                "Progressive Tophat Slash",
+                "Progressive Tophat Dash",
+                "Progressive Tophat Crash",
+                "Progressive Tophat Smash",
+                count=10,
             )
-        world.get_location("Kid's Cove - Status Bomb Gem").access_rule = \
-            lambda state: state.has("Toy Bonnie", player)
-        world.get_location("Men's Bathroom - Paravolt Gem").access_rule = \
-            lambda state: state.has("Mangle", player)
-        world.get_location("Women's Bathroom - Grab Bag Gem").access_rule = \
-            lambda state: state.has("Toy Bonnie", player)
-        world.get_location("Women's Bathroom - Somnojolt Gem").access_rule = \
-            lambda state: state.has("Mangle", player)
-        world.get_location("Office - Electroshock Gem").access_rule = \
-            lambda state: state.has("Mangle", player)
-        world.get_location("Office - Recovery Wing Gem").access_rule = \
-            lambda state: state.has("Toy Chica", player)
-        world.get_location("Office - Spread Bomb Gem").access_rule = \
-            lambda state: state.has("Toy Bonnie", player)
-        world.get_location("Party Room 1 - Timer Flip Gem").access_rule = \
-            lambda state: state.has("Toy Bonnie", player)
-        world.get_location("Party Room 2 - Healing Wing Gem").access_rule = \
-            lambda state: state.has("Toy Chica", player)
-        world.get_location("Party Room 3 - Curing Wing Gem").access_rule = \
-            lambda state: state.has("Toy Chica", player)
-        world.get_location("Party Room 4 - Raising Wing Gem").access_rule = \
-            lambda state: state.has("Toy Chica", player)
-        world.get_location("Party Room 4 - Lightningbolt Gem").access_rule = \
-            lambda state: state.has("Mangle", player)
+            & Has("Progressive Body Endoskeletons", count=4)
+            & Has("Progressive Head Endoskeletons", count=4)
+            & Has("Progressive Pizza Shields", count=4)
+            & Has("Progressive Caffeine Sodas", count=4)
+            & Has("Withered Bonnie")
+            & Has("Withered Chica")
+            & Has("Withered Foxy"),
+        )
+        for location_name, character in (
+            ("Kid's Cove - Status Bomb Gem", "Toy Bonnie"),
+            ("Men's Bathroom - Paravolt Gem", "Mangle"),
+            ("Women's Bathroom - Grab Bag Gem", "Toy Bonnie"),
+            ("Women's Bathroom - Somnojolt Gem", "Mangle"),
+            ("Office - Electroshock Gem", "Mangle"),
+            ("Office - Recovery Wing Gem", "Toy Chica"),
+            ("Office - Spread Bomb Gem", "Toy Bonnie"),
+            ("Party Room 1 - Timer Flip Gem", "Toy Bonnie"),
+            ("Party Room 2 - Healing Wing Gem", "Toy Chica"),
+            ("Party Room 3 - Curing Wing Gem", "Toy Chica"),
+            ("Party Room 4 - Raising Wing Gem", "Toy Chica"),
+            ("Party Room 4 - Lightningbolt Gem", "Mangle"),
+        ):
+            set_rule(location_name, Has(character))
 
     # Levelsanity
     if world.options.levelsanity == Toggle.option_true and world.options.difficulty.value < 2:
         for i in range(1, 21):
             if i < 6:
-                world.get_location(f"Toy Bonnie - Level {i}").access_rule = \
-                    lambda state: state.has("Toy Bonnie", player)
-                world.get_location(f"Toy Chica - Level {i}").access_rule = \
-                    lambda state: state.has("Toy Chica", player)
-                world.get_location(f"Mangle - Level {i}").access_rule = \
-                    lambda state: state.has("Mangle", player)
+                set_rule(f"Toy Bonnie - Level {i}", Has("Toy Bonnie"))
+                set_rule(f"Toy Chica - Level {i}", Has("Toy Chica"))
+                set_rule(f"Mangle - Level {i}", Has("Mangle"))
             elif i < 11:
-                world.get_location(f"Toy Freddy - Level {i}").access_rule = \
-                    lambda state: _can_fight_earlygame(world, state, player)
-                world.get_location(f"Toy Bonnie - Level {i}").access_rule = \
-                    lambda state: _can_fight_earlygame(world, state, player) and state.has("Toy Bonnie", player)
-                world.get_location(f"Toy Chica - Level {i}").access_rule = \
-                    lambda state: _can_fight_earlygame(world, state, player) and state.has("Toy Chica", player)
-                world.get_location(f"Mangle - Level {i}").access_rule = \
-                    lambda state: _can_fight_earlygame(world, state, player) and state.has("Mangle", player)
+                stage = early
+                set_rule(f"Toy Freddy - Level {i}", stage)
+                set_rule(f"Toy Bonnie - Level {i}", stage & Has("Toy Bonnie"))
+                set_rule(f"Toy Chica - Level {i}", stage & Has("Toy Chica"))
+                set_rule(f"Mangle - Level {i}", stage & Has("Mangle"))
             elif i < 16:
-                world.get_location(f"Toy Freddy - Level {i}").access_rule = \
-                    lambda state: _can_fight_midgame(world, state, player)
-                world.get_location(f"Toy Bonnie - Level {i}").access_rule = \
-                    lambda state: _can_fight_midgame(world, state, player) and state.has("Toy Bonnie", player)
-                world.get_location(f"Toy Chica - Level {i}").access_rule = \
-                    lambda state: _can_fight_midgame(world, state, player) and state.has("Toy Chica", player)
-                world.get_location(f"Mangle - Level {i}").access_rule = \
-                    lambda state: _can_fight_midgame(world, state, player) and state.has("Mangle", player)
+                stage = mid
+                set_rule(f"Toy Freddy - Level {i}", stage)
+                set_rule(f"Toy Bonnie - Level {i}", stage & Has("Toy Bonnie"))
+                set_rule(f"Toy Chica - Level {i}", stage & Has("Toy Chica"))
+                set_rule(f"Mangle - Level {i}", stage & Has("Mangle"))
             else:
-                world.get_location(f"Toy Freddy - Level {i}").access_rule = \
-                    lambda state: _can_fight_almostlategame(world, state, player)
-                world.get_location(f"Toy Bonnie - Level {i}").access_rule = \
-                    lambda state: _can_fight_almostlategame(world, state, player) and state.has("Toy Bonnie", player)
-                world.get_location(f"Toy Chica - Level {i}").access_rule = \
-                    lambda state: _can_fight_almostlategame(world, state, player) and state.has("Toy Chica", player)
-                world.get_location(f"Mangle - Level {i}").access_rule = \
-                    lambda state: _can_fight_almostlategame(world, state, player) and state.has("Mangle", player)
+                stage = almostlate
+                set_rule(f"Toy Freddy - Level {i}", stage)
+                set_rule(f"Toy Bonnie - Level {i}", stage & Has("Toy Bonnie"))
+                set_rule(f"Toy Chica - Level {i}", stage & Has("Toy Chica"))
+                set_rule(f"Mangle - Level {i}", stage & Has("Mangle"))
         
-        world.get_location("Toy Freddy - Learn Tophat Dash").access_rule = \
-            lambda state: _can_fight_earlygame(world, state, player)
-        world.get_location("Toy Freddy - Learn Tophat Crash").access_rule = \
-            lambda state: _can_fight_midgame(world, state, player)
-        world.get_location("Toy Freddy - Learn Tophat Smash").access_rule = \
-            lambda state: _can_fight_lategame(world, state, player)
-        world.get_location("Toy Freddy - Use Tophat Slash 20 times").access_rule = \
-            lambda state: state.has("Progressive Tophat Slash", player)
-        world.get_location("Toy Freddy - Use Tophat Slash 40 times").access_rule = \
-            lambda state: state.has("Progressive Tophat Slash", player)
-        world.get_location("Toy Freddy - Use Tophat Dash 20 times").access_rule = \
-            lambda state: state.has("Progressive Tophat Dash", player)
-        world.get_location("Toy Freddy - Use Tophat Dash 40 times").access_rule = \
-            lambda state: state.has("Progressive Tophat Dash", player)
-        world.get_location("Toy Freddy - Use Tophat Crash 20 times").access_rule = \
-            lambda state: state.has("Progressive Tophat Crash", player)
-        world.get_location("Toy Freddy - Use Tophat Crash 40 times").access_rule = \
-            lambda state: state.has("Progressive Tophat Crash", player)
-        world.get_location("Toy Freddy - Use Tophat Smash 20 times").access_rule = \
-            lambda state: state.has("Progressive Tophat Smash", player)
-        world.get_location("Toy Freddy - Use Tophat Smash 40 times").access_rule = \
-            lambda state: state.has("Progressive Tophat Smash", player)
+        set_rule("Toy Freddy - Learn Tophat Dash", early)
+        set_rule("Toy Freddy - Learn Tophat Crash", mid)
+        set_rule("Toy Freddy - Learn Tophat Smash", late)
+        for name in ("Slash", "Dash", "Crash", "Smash"):
+            item_name = f"Progressive Tophat {name}"
+            for uses in (20, 40):
+                set_rule(f"Toy Freddy - Use Tophat {name} {uses} times", Has(item_name))
 
-        world.get_location("Mangle - Learn Electroshock").access_rule = \
-            lambda state: state.has("Mangle", player)
-        world.get_location("Mangle - Learn Paravolt").access_rule = \
-            lambda state: _can_fight_earlygame(world, state, player) and state.has("Mangle", player)
-        world.get_location("Mangle - Learn Somnojolt").access_rule = \
-            lambda state: _can_fight_midgame(world, state, player) and state.has("Mangle", player)
-        world.get_location("Mangle - Learn Lightningbolt").access_rule = \
-            lambda state: _can_fight_almostlategame(world, state, player) and state.has("Mangle", player)
+        set_rule("Mangle - Learn Electroshock", Has("Mangle"))
+        set_rule("Mangle - Learn Paravolt", early & Has("Mangle"))
+        set_rule("Mangle - Learn Somnojolt", mid & Has("Mangle"))
+        set_rule("Mangle - Learn Lightningbolt", almostlate & Has("Mangle"))
         
-        world.get_location("Toy Chica - Learn Healing Wing").access_rule = \
-            lambda state: state.has("Toy Chica", player)
-        world.get_location("Toy Chica - Learn Curing Wing").access_rule = \
-            lambda state: _can_fight_earlygame(world, state, player) and state.has("Toy Chica", player)
-        world.get_location("Toy Chica - Learn Raising Wing").access_rule = \
-            lambda state: _can_fight_midgame(world, state, player) and state.has("Toy Chica", player)
-        world.get_location("Toy Chica - Learn Recovery Wing").access_rule = \
-            lambda state: _can_fight_almostlategame(world, state, player) and state.has("Toy Chica", player)
+        set_rule("Toy Chica - Learn Healing Wing", Has("Toy Chica"))
+        set_rule("Toy Chica - Learn Curing Wing", early & Has("Toy Chica"))
+        set_rule("Toy Chica - Learn Raising Wing", mid & Has("Toy Chica"))
+        set_rule("Toy Chica - Learn Recovery Wing", almostlate & Has("Toy Chica"))
         
-        world.get_location("Toy Bonnie - Learn Grab Bag").access_rule = \
-            lambda state: state.has("Toy Bonnie", player)
-        world.get_location("Toy Bonnie - Learn Status Bomb").access_rule = \
-            lambda state: _can_fight_earlygame(world, state, player) and state.has("Toy Bonnie", player)
-        world.get_location("Toy Bonnie - Learn Spread Bomb").access_rule = \
-            lambda state: _can_fight_midgame(world, state, player) and state.has("Toy Bonnie", player)
-        world.get_location("Toy Bonnie - Learn Timer Flip").access_rule = \
-            lambda state: _can_fight_almostlategame(world, state, player) and state.has("Toy Bonnie", player)
+        set_rule("Toy Bonnie - Learn Grab Bag", Has("Toy Bonnie"))
+        set_rule("Toy Bonnie - Learn Status Bomb", early & Has("Toy Bonnie"))
+        set_rule("Toy Bonnie - Learn Spread Bomb", mid & Has("Toy Bonnie"))
+        set_rule("Toy Bonnie - Learn Timer Flip", almostlate & Has("Toy Bonnie"))
         
-        world.get_location("Toy Freddy - Learn Death Inhale").access_rule = \
-            lambda state: state.has("Tophat Keystone", player)
-        world.get_location("Toy Bonnie - Learn Terror Fever").access_rule = \
-            lambda state: state.has("Terror Keystone", player) and state.has("Toy Bonnie", player)
-        world.get_location("Toy Chica - Learn Avian Strike").access_rule = \
-            lambda state: state.has("Avian Keystone", player) and state.has("Toy Chica", player)
-        world.get_location("Mangle - Learn Disassembly").access_rule = \
-            lambda state: state.has("Assembly Keystone", player) and state.has("Mangle", player)
+        set_rule("Toy Freddy - Learn Death Inhale", Has("Tophat Keystone"))
+        set_rule("Toy Bonnie - Learn Terror Fever", Has("Terror Keystone") & Has("Toy Bonnie"))
+        set_rule("Toy Chica - Learn Avian Strike", Has("Avian Keystone") & Has("Toy Chica"))
+        set_rule("Mangle - Learn Disassembly", Has("Assembly Keystone") & Has("Mangle"))
