@@ -6,6 +6,8 @@ class Scenario(Choice):
     """
     Choose which scenario to play
     """
+    
+    display_name = "Scenario"
     option_toy_freddy = 0
     option_bb = 1
     default = 0
@@ -17,6 +19,8 @@ class Goal(Choice):
     If scenario is bb, goal is to beat the toy animatronics.
     (Refurbs is not recommended.)
     """
+    
+    display_name = "Goal"
     option_bb = 0
     option_refurbs = 1
     default = 0
@@ -27,6 +31,7 @@ class TradeQuest(Toggle):
     Includes RNG Trade Item drops in the randomizer.
     (Adds 5 locations.)
     """
+    
     display_name = "Include Trade Checks"
 
 
@@ -36,6 +41,7 @@ class Difficulty(Choice):
     Playing on Critical will include everything on Proud plus each keystone for ability unlocks and 2 chests in Kid's Cove.
     Proud and Critical have not been playtested so fair warning.
     """
+    
     display_name = "Difficulty"
     option_standard = 0
     option_proud = 1
@@ -48,6 +54,7 @@ class FemRods(DefaultOnToggle):
     Turning this on will force both Rod of Femininity A and B to be filler items.
     If this is off, all locations in the women's bathroom won't be in logic until the second puppet is accessible.
     """
+    
     display_name = "Exclude Rod of Femininity"
 
 
@@ -56,6 +63,7 @@ class ExtraChecks(DefaultOnToggle):
     Turning this on will force Boss Rush and the Dragon Dildo F check to be a filler item.
     This setting is ignored if goal is set to refurbs.
     """
+    
     display_name = "Exclude Extra Checks"
 
 
@@ -64,6 +72,7 @@ class ShadowBonnie(Toggle):
     Turning this on will force the Shadow Bonnie bossfight check to be a filler item.
     This setting is only affected if the critical difficulty is enabled. 
     """
+    
     display_name = "Exclude Shadow Bonnie"
 
 
@@ -73,6 +82,7 @@ class Levelsanity(Toggle):
     This setting is ignored if the difficulty is critical
     Adds 100 locations if scenario is toy freddy, else it's 40
     """
+    
     display_name = "Include Levelsanity"
 
 
@@ -82,6 +92,7 @@ class GrindyChecks(Toggle):
     abilities 20 or 40 times.
     This setting will always be off if levelsanity is off.
     """
+    
     display_anme = "Exclude Grindy Checks"
 
 
@@ -89,16 +100,27 @@ class Copyright(Toggle):
     """
     Enable copyright songs
     """
+    
     display_name = "Copyright Songs"
+
 
 class Shop(Range):
     """
     Change the percentage of the vending machine items cost
     """
+    
     display_name = "Shop Percentage"
     range_start = 1
     range_end = 1000
     default = 100
+
+
+class NerfOfficeCamera(DefaultOnToggle):
+    """
+    In the B.B. Scenario, nerf the office camera fight by giving your party a 50% defense boost
+    """
+    
+    display_name = "Nerf Office Camera"
 
 #class DeathLink(Toggle):
 #    """
@@ -119,4 +141,5 @@ class FNaFB2Options (PerGameCommonOptions):
     grindy: GrindyChecks
     copyright: Copyright
     shop: Shop
+    office_camera: NerfOfficeCamera
 #    "death_link": DeathLink

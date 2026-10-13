@@ -1,15 +1,95 @@
+import dataclasses
+from typing import override, TYPE_CHECKING
+
 from BaseClasses import CollectionState, MultiWorld, Location, Region, Item
 from .Regions import connect_regions
-from .TF_Rules import set_tf_rules
-from .Q_Rules import set_q_rules
 from Options import Toggle
-from typing import TYPE_CHECKING
+from rule_builder.rules import Has, Rule
 
 if TYPE_CHECKING:
     from . import FNaFB2World
 
+
+CAMERA_LOCATIONS = (
+    "Show Stage - Camera",
+    "Game Room - Camera",
+    "Prize Corner - Camera",
+    "Main Hall - Camera",
+    "Kid's Cove - Camera",
+    "Parts/Service - Camera",
+    "Office - Camera",
+    "Left Vent - Camera",
+    "Right Vent - Camera",
+    "Party Room 1 - Camera",
+    "Party Room 2 - Camera",
+    "Party Room 3 - Camera",
+    "Party Room 4 - Camera",
+)
+
+
+@dataclasses.dataclass()
+class FightStage(Rule["FNaFB2World"], game="Five Nights at Fuckboy's 2"):
+    stage: str
+
+    def _instantiate(self, world: "FNaFB2World") -> Rule.Resolved:
+        return self.Resolved(self.stage, world.options.scenario.value, player=world.player, caching_enabled=getattr(world, "rule_caching_enabled", False))
+
+    class Resolved(Rule.Resolved):
+        stage: str
+        scenario: int
+
+        def _evaluate(self, state: CollectionState) -> bool:
+            return _can_fight(self.stage, self.scenario, state, self.player)
+
+        @override
+        def item_dependencies(self) -> dict[str, set[int]]:
+            item_names = (
+                "Toy Bonnie", "Toy Chica", "Mangle", "Withered Freddy", "Withered Bonnie",
+                "Withered Chica", "Withered Foxy", "The Puppet",
+                "Progressive Microphone", "Progressive Rod of Femininity", "Progressive Dragon Dildo",
+                "Progressive Guitar", "Progressive Cupcakes", "Progressive Hook",
+                "Progressive Body Endoskeletons", "Progressive Head Endoskeletons",
+                "Progressive Pizza Shields", "Progressive Caffeine Sodas",
+                "Progressive Tophat Slash", "Progressive Tophat Dash", "Progressive Tophat Crash",
+                "Progressive Tophat Smash", "Grab Bag", "Status Bomb", "Spread Bomb",
+                "Healing Wing", "Curing Wing", "Raising Wing", "Recovery Wing",
+                "Electroshock", "Paravolt", "Somnojolt", "Lightningbolt",
+                "Token Throw", "Flying Fright", "B.B. - Curing Wing", "B.B. - Poison Lens",
+                "B.B. - Smoke Lens", "B.B. - Confusion Lens", "B.B. - Spread Bomb",
+                "The Puppet - Curing Wing", "The Puppet - Poison Lens", "The Puppet - Spread Bomb",
+                "The Puppet - Smoke Lens", "The Puppet - Confusion Lens", "Death", "Toreador March",
+            )
+            return {item_name: {id(self)} for item_name in item_names}
+
+
+@dataclasses.dataclass()
+class CameraCount(Rule["FNaFB2World"], game="Five Nights at Fuckboy's 2"):
+    count: int
+
+    def _instantiate(self, world: "FNaFB2World") -> Rule.Resolved:
+        return self.Resolved(
+            self.count,
+            player=world.player,
+            caching_enabled=getattr(world, "rule_caching_enabled", False),
+        )
+
+    class Resolved(Rule.Resolved):
+        count: int
+
+        def _evaluate(self, state: CollectionState) -> bool:
+            return sum(state.can_reach_location(name, self.player) for name in CAMERA_LOCATIONS) >= self.count
+
+        @override
+        def location_dependencies(self) -> dict[str, set[int]]:
+            return {location_name: {id(self)} for location_name in CAMERA_LOCATIONS}
+
+
 def party_count(world: "FNaFB2World", state: CollectionState, player: int) -> int:
-    if world.options.scenario.value == 0:
+    return _party_count(world.options.scenario.value, state, player)
+
+
+def _party_count(scenario: int, state: CollectionState, player: int) -> int:
+    if scenario == 0:
         return (
             state.count("Toy Bonnie", player)
             + state.count("Toy Chica", player) 
@@ -68,9 +148,12 @@ def total_defense(state: CollectionState, player: int) -> int:
         + state.count("Withered Foxy", player) * 40
     )
 
-# This one's a bit of a mess, might have to rethink it at a later time
 def skills(world: "FNaFB2World", state: CollectionState, player: int) -> int:
-    if world.options.scenario.value == 0:
+    return _skills(world.options.scenario.value, state, player)
+
+
+def _skills(scenario: int, state: CollectionState, player: int) -> int:
+    if scenario == 0:
         return (
             (
                 state.count("Progressive Tophat Slash", player)
@@ -123,71 +206,63 @@ def skills(world: "FNaFB2World", state: CollectionState, player: int) -> int:
         )
 
 def can_fight_earlygame(world: "FNaFB2World", state: CollectionState, player: int) -> bool:
-    if world.options.scenario.value == 0:
-        return (
-            total_attack(state, player) >= 1
-            and total_defense(state, player) >= 4 
-            and skills(world, state, player) >= 1
-        )
-    else:
-        return True
+    return _can_fight("earlygame", world.options.scenario.value, state, player)
+
 
 def can_fight_midgame(world: "FNaFB2World", state: CollectionState, player: int) -> bool:
-    if world.options.scenario.value == 0:
-        return (
-            total_attack(state, player) >= 3 
-            and total_defense(state, player) >= 8
-            and party_count(world, state, player) >= 2
-            and skills(world, state, player) >= 2
-        )
-    else:
-        return skills(world, state, player) >= 2
+    return _can_fight("midgame", world.options.scenario.value, state, player)
+
 
 def can_fight_postmidgame(world: "FNaFB2World", state: CollectionState, player: int) -> bool:
-    if world.options.scenario.value == 0:
-        return (
-            total_attack(state, player) >= 6
-            and total_defense(state, player) >= 12
-            and party_count(world, state, player) >= 3
-            and skills(world, state, player) >= 4
-        )
-    else:
-        return party_count(world, state, player) > 1 and skills(world, state, player) >= 4
+    return _can_fight("postmidgame", world.options.scenario.value, state, player)
+
 
 def can_fight_almostlategame(world: "FNaFB2World", state: CollectionState, player: int) -> bool:
-    if world.options.scenario.value == 0:
-        return (
-            total_attack(state, player) >= 10
-            and total_defense(state, player) >= 20
-            and party_count(world, state, player) >= 4
-            and skills(world, state, player) >= 6
-        )
-    else:
-        return party_count(world, state, player) > 1 and skills(world, state, player) >= 8
+    return _can_fight("almostlategame", world.options.scenario.value, state, player)
+
 
 def can_fight_lategame(world: "FNaFB2World", state: CollectionState, player: int) -> bool:
-    if world.options.scenario.value == 0:
-        return (
-            total_attack(state, player) >= 24
-            and total_defense(state, player) >= 160
-            and party_count(world, state, player) >= 6
-            and skills(world, state, player) >= 20
-        )
-    else:
-        return party_count(world, state, player) > 1 and skills(world, state, player) >= 12
+    return _can_fight("lategame", world.options.scenario.value, state, player)
+
 
 def can_fight_endgame(world: "FNaFB2World", state: CollectionState, player: int) -> bool:
-    if world.options.scenario.value == 0:
-        return (
-            total_attack(state, player) >= 40
-            and total_defense(state, player) >= 300
-            and party_count(world, state, player) >= 7
-            and skills(world, state, player) >= 25
-        )
+    return _can_fight("endgame", world.options.scenario.value, state, player)
+
+
+def _can_fight(stage: str, scenario: int, state: CollectionState, player: int) -> bool:
+    if scenario == 0:
+        if stage == "earlygame":
+            return total_attack(state, player) >= 1 and total_defense(state, player) >= 4 and _skills(0, state, player) >= 1
+        if stage == "midgame":
+            return total_attack(state, player) >= 3 and total_defense(state, player) >= 8 and _party_count(0, state, player) >= 2 and _skills(0, state, player) >= 2
+        if stage == "postmidgame":
+            return total_attack(state, player) >= 6 and total_defense(state, player) >= 12 and _party_count(0, state, player) >= 3 and _skills(0, state, player) >= 4
+        if stage == "almostlategame":
+            return total_attack(state, player) >= 10 and total_defense(state, player) >= 20 and _party_count(0, state, player) >= 4 and _skills(0, state, player) >= 6
+        if stage == "lategame":
+            return total_attack(state, player) >= 24 and total_defense(state, player) >= 160 and _party_count(0, state, player) >= 6 and _skills(0, state, player) >= 20
+        if stage == "endgame":
+            return total_attack(state, player) >= 40 and total_defense(state, player) >= 300 and _party_count(0, state, player) >= 7 and _skills(0, state, player) >= 25
     else:
-        return party_count(world, state, player) > 1 and skills(world, state, player) >= 15 and state.has("Death", player)
+        if stage == "earlygame":
+            return True
+        if stage == "midgame":
+            return _skills(1, state, player) >= 2
+        if stage == "postmidgame":
+            return _party_count(1, state, player) > 1 and _skills(1, state, player) >= 4
+        if stage == "almostlategame":
+            return _party_count(1, state, player) > 1 and _skills(1, state, player) >= 8
+        if stage == "lategame":
+            return _party_count(1, state, player) > 1 and _skills(1, state, player) >= 12
+        if stage == "endgame":
+            return _party_count(1, state, player) > 1 and _skills(1, state, player) >= 15 and state.has("Death", player)
+    raise ValueError(f"Unknown fight stage: {stage}")
+
 
 def set_rules(world: "FNaFB2World", player: int):
+    from .Q_Rules import set_q_rules
+    from .TF_Rules import set_tf_rules
+
     if world.options.scenario.value == 0:
         set_tf_rules(world, player)
     else:
@@ -206,7 +281,7 @@ def set_rules(world: "FNaFB2World", player: int):
     if world.options.fem_rods == Toggle.option_true or world.options.scenario.value == 1:
         connect_regions(world, "Main Hall", "Women's Bathroom")
     else:
-        connect_regions(world, "Main Hall", "Women's Bathroom", lambda state: can_fight_endgame(world, state, player))
+        connect_regions(world, "Main Hall", "Women's Bathroom", FightStage("endgame"))
     connect_regions(world, "Main Hall", "Parts/Service")
     connect_regions(world, "Main Hall", "Office Hall")
     connect_regions(world, "Office Hall", "Party Room 4")
@@ -218,8 +293,8 @@ def set_rules(world: "FNaFB2World", player: int):
     connect_regions(world, "Party Room 2", "Right Vent")
     connect_regions(world, "Left Vent", "Office")
     connect_regions(world, "Right Vent", "Office")
-    connect_regions(world, "Office", "Cave of the Past", lambda state: can_fight_endgame(world, state, player) \
-        and state.has("B.B.'s Essence" if world.options.scenario.value == 0 else "Toy Animatronics' Essence", player, 4))
+    essence = "B.B.'s Essence" if world.options.scenario.value == 0 else "Toy Animatronics' Essence"
+    connect_regions(world, "Office", "Cave of the Past", FightStage("endgame") & Has(essence, count=4))
     connect_regions(world, "Cave of the Past", "B.B.'s Lair")
     connect_regions(world, "B.B.'s Lair", "B.B. Giygas")
     if world.options.difficulty.value > 0:
@@ -244,11 +319,11 @@ def set_rules(world: "FNaFB2World", player: int):
         connect_regions(world, "Party Room 4", "Party Room 4 Critical")
         connect_regions(world, "Office", "Office Critical")
     if world.options.scenario.value == 0:
-        connect_regions(world, "Kid's Cove", "Kid's Cove B.B.", lambda state: state.has("Kid's Cove B.B.", player) and can_fight_almostlategame(world, state, player))
-        connect_regions(world, "Main Hall", "Main Hall B.B.", lambda state: state.has("Main Hall B.B.", player) and can_fight_earlygame(world, state, player))
-        connect_regions(world, "Party Room 3", "Party Room 3 B.B.", lambda state: state.has("Party Room 3 B.B.", player) and can_fight_midgame(world, state, player))
-        connect_regions(world, "Office", "Office B.B.", lambda state: state.has("Office B.B.", player) and can_fight_lategame(world, state, player))
+        connect_regions(world, "Kid's Cove", "Kid's Cove B.B.", Has("Kid's Cove B.B.") & FightStage("almostlategame"))
+        connect_regions(world, "Main Hall", "Main Hall B.B.", Has("Main Hall B.B.") & FightStage("earlygame"))
+        connect_regions(world, "Party Room 3", "Party Room 3 B.B.", Has("Party Room 3 B.B.") & FightStage("midgame"))
+        connect_regions(world, "Office", "Office B.B.", Has("Office B.B.") & FightStage("lategame"))
         if world.options.goal.value == 1:
             connect_regions(world, "B.B. Giygas", "Refurbs")
 
-    world.multiworld.completion_condition[player] = lambda state: state.has("Victory", player)
+    world.set_completion_rule(Has("Victory"))

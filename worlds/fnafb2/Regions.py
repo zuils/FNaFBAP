@@ -2,7 +2,7 @@ from typing import Dict, List, NamedTuple, Optional, TYPE_CHECKING
 
 if TYPE_CHECKING:
     from .__init__ import FNaFB2World
-from BaseClasses import MultiWorld, Region, LocationProgressType
+from BaseClasses import Region, LocationProgressType
 from .Locations import FNaFB2Location, location_table, has_category
 from Options import Toggle
 
@@ -146,7 +146,9 @@ def create_region(world: "FNaFB2World", player: int, name: str, data: FNaFB2Regi
 
     return region
     
-def connect_regions(multiworld: MultiWorld, source: str, target: List[str], rule=None):
-    sourceRegion = multiworld.get_region(source)
-    targetRegion = multiworld.get_region(target)
-    sourceRegion.connect(targetRegion, rule=rule)
+def connect_regions(world: "FNaFB2World", source: str, target: str, rule=None):
+    source_region = world.get_region(source)
+    target_region = world.get_region(target)
+    entrance = source_region.connect(target_region)
+    if rule is not None:
+        world.set_rule(entrance, rule)
